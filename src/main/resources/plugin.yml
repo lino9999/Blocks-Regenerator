@@ -1,0 +1,62 @@
+name: BlocksRegenerator
+version: '${project.version}'
+main: dev.lino.blocksregenerator.BlocksRegeneratorPlugin
+api-version: '26.3'
+authors: [Lino]
+description: Region based block, crop and custom content regeneration
+website: https://github.com/lino9999/Blocks-Regenerator
+softdepend:
+  - OreRegenerator
+  - ItemsAdder
+  - Oraxen
+  - Nexo
+  - BlockHardness
+  - PlaceholderAPI
+  - WorldGuard
+  - GriefPrevention
+  - Towny
+  - Lands
+  - Residence
+  - Kingdoms
+  - IridiumSkyblock
+  - CrashClaim
+  - GriefDefender
+  - HuskClaims
+  - BentoBox
+  - HuskTowns
+  - PlotSquared
+  - SuperiorSkyblock2
+  - FabledSkyBlock
+  - RedProtect
+  - Landlord
+  - uSkyBlock
+  - XClaim
+  - UltimateClaims
+  - UltimateClans
+  - PreciousStones
+  - Dominion
+  - Factions
+  - NoBuildPlus
+  - Protect
+  - SimpleClaimSystem
+  - LandClaimPlugin
+commands:
+  blocksregenerator:
+    aliases: [br, or, oreregenerator]
+    description: Manage regeneration regions
+    usage: /br help
+permissions:
+  blocksregenerator.admin:
+    default: op
+    description: Manage regeneration regions and configuration
+  oreregenerator.admin:
+    default: false
+    children:
+      blocksregenerator.admin: true
+  blocksregenerator.bypass.claims:
+    default: false
+    description: Bypass land claim checks made by this plugin
+  oreregenerator.bypass.claims:
+    default: false
+    children:
+      blocksregenerator.bypass.claims: true

@@ -1,0 +1,1 @@
+Read docs/AGENTS.md before changing this project. It contains the architecture map, invariants, targeted reading paths, and verification commands. Do not recursively read .work, .tools, target, or Plugin originale. All source, documentation, configuration, and plugin messages use English. Author: Lino. Do not add comments to code.

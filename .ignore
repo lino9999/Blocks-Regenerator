@@ -1,0 +1,12 @@
+/Plugin originale/
+/.work/
+/.tools/
+/.git/
+/target/
+/server/
+/run/
+*.jar
+*.class
+*.log
+/mvnw
+/mvnw.cmd
