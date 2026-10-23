@@ -2,15 +2,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.lino</groupId>
   <artifactId>blocks-regenerator</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <name>BlocksRegenerator</name>
   <description>Region based block and crop regeneration for Spigot</description>
   <url>https://github.com/lino9999/Blocks-Regenerator</url>
   <developers><developer><id>Lino</id><name>Lino</name></developer></developers>
   <properties>
-    <maven.compiler.release>25</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spigot.version>26.3-R0.1-SNAPSHOT</spigot.version>
+    <spigot.version>1.21.11-R0.1-SNAPSHOT</spigot.version>
   </properties>
   <repositories>
     <repository><id>spigot-snapshots</id><url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url></repository>

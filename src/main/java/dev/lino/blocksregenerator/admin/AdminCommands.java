@@ -1,5 +1,6 @@
 package dev.lino.blocksregenerator.admin;
 
+import dev.lino.blocksregenerator.bukkit.MaterialResolver;
 import dev.lino.blocksregenerator.model.BlockKey;
 import dev.lino.blocksregenerator.model.Bounds;
 import dev.lino.blocksregenerator.model.DelayRange;
@@ -182,7 +183,7 @@ final class AdminCommands {
         } else if (args[0].equalsIgnoreCase("set")) {
             require(args, 4, "setting set <region> <setting> <value>");
             if (args[2].equalsIgnoreCase("region-display-icon")) {
-                Material material = Material.matchMaterial(args[3]);
+                Material material = MaterialResolver.match(args[3]);
                 if (material == null || !material.isItem()) {
                     throw new IllegalArgumentException("Choose an item material for the icon.");
                 }
