@@ -127,7 +127,7 @@ final class AdminCommands {
                 backend.save(region(args[1]).withPriority(number(args[2])));
                 sender.sendMessage("Region priority saved.");
             }
-            default -> throw new IllegalArgumentException("Unknown command. Use /br help.");
+            default -> throw new IllegalArgumentException("Unknown command. Use /blocksregenerator help.");
         }
     }
 
@@ -136,7 +136,7 @@ final class AdminCommands {
         if (args[0].equalsIgnoreCase("global")) {
             require(args, 3, "region global create <world>");
             if (!args[1].equalsIgnoreCase("create")) {
-                throw new IllegalArgumentException("Usage: /br region global create <world>");
+                throw new IllegalArgumentException("Usage: /blocksregenerator region global create <world>");
             }
             global(args[2], args[2]);
             sender.sendMessage("Global region created.");
@@ -277,7 +277,7 @@ final class AdminCommands {
         }
         AdminSessions.Selection selection = sessions.selection(player);
         if (selection.first() == null || selection.second() == null) {
-            throw new IllegalArgumentException("Select both corners with /br wand or /br pos1 and /br pos2.");
+            throw new IllegalArgumentException("Select both corners with /blocksregenerator wand or /blocksregenerator pos1 and /blocksregenerator pos2.");
         }
         backend.save(Region.create(id, selection.first().world(), Bounds.between(selection.first(), selection.second())));
         player.sendMessage("Region " + id + " created.");
@@ -476,22 +476,22 @@ final class AdminCommands {
 
     private static void require(String[] args, int length, String usage) {
         if (args.length < length) {
-            throw new IllegalArgumentException("Usage: /br " + usage);
+            throw new IllegalArgumentException("Usage: /blocksregenerator " + usage);
         }
     }
 
     private void help(CommandSender sender) {
-        sender.sendMessage(new String[]{"BlocksRegenerator by Lino", "/br menu | wand | pos1 | pos2 | edges | add",
-                "/br create <region> | global <world> [region] | select <region>",
-                "/br list | edit <region> | delete <region> | regenerate <region>",
-                "/br block add <region> <original> <replacement> <min> [max]",
-                "/br block remove <region> <material|number|uuid>",
-                "/br block delay|replace|age <region> <block> <values>",
-                "/br setting get|set <region> <setting> [value]",
-                "/br chain add|remove|rename|style|final|stage|delay <region> <chain> [values]",
-                "/br copy <region> [all|blocks|chains] | paste <region>",
-                "/br priority <region> <number> | reload | eval <expression>",
-                "/br import <oreregenerator|ultimate-regen|minexfarm-regen>",
+        sender.sendMessage(new String[]{"BlocksRegenerator by Lino", "/blocksregenerator menu | wand | pos1 | pos2 | edges | add",
+                "/blocksregenerator create <region> | global <world> [region] | select <region>",
+                "/blocksregenerator list | edit <region> | delete <region> | regenerate <region>",
+                "/blocksregenerator block add <region> <original> <replacement> <min> [max]",
+                "/blocksregenerator block remove <region> <material|number|uuid>",
+                "/blocksregenerator block delay|replace|age <region> <block> <values>",
+                "/blocksregenerator setting get|set <region> <setting> [value]",
+                "/blocksregenerator chain add|remove|rename|style|final|stage|delay <region> <chain> [values]",
+                "/blocksregenerator copy <region> [all|blocks|chains] | paste <region>",
+                "/blocksregenerator priority <region> <number> | reload | eval <expression>",
+                "/blocksregenerator import <oreregenerator|ultimate-regen|minexfarm-regen>",
                 "Custom blocks: type:id. Crop age: crop:WHEAT_SEEDS@7. See docs/COMMANDS.md."});
     }
 }

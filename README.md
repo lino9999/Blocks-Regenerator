@@ -33,23 +33,25 @@ Overlapping regions use the highest priority; equal priorities use the region ID
 ## Installation and upgrades
 
 1. Stop the server and back up its worlds and plugin data.
-2. Download `BlocksRegenerator-1.0.1.jar` from [Releases](https://github.com/lino9999/Blocks-Regenerator/releases/latest) and place it in `plugins/`.
+2. Download `BlocksRegenerator-1.0.2.jar` from [Releases](https://github.com/lino9999/Blocks-Regenerator/releases/latest) and place it in `plugins/`.
 3. Remove older BlocksRegenerator JARs and the original OreRegenerator JAR from `plugins/`. Keep their data folders for migration or recovery.
 4. Start the server using the Java version in the compatibility table.
-5. Check the console for `Enabling BlocksRegenerator v1.0.1`, then run `/br` as an operator or an administrator with the permission below.
+5. Check the console for `Enabling BlocksRegenerator v1.0.2`, then run `/blocksregenerator` as an operator or an administrator with the permission below.
 
-Configuration and saved state are created in `plugins/BlocksRegenerator/`. Upgrading from BlocksRegenerator 1.0.0 preserves the existing data format; keep the data folder and replace the JAR while the server is stopped. Version 1.0.0 required server API 26.3; use 1.0.1 for the wider compatibility range.
+Configuration and saved state are created in `plugins/BlocksRegenerator/`. Upgrading from BlocksRegenerator 1.0.0 preserves the existing data format; keep the data folder and replace the JAR while the server is stopped. Version 1.0.0 required server API 26.3; use 1.0.2 for the wider compatibility range.
+
+Version 1.0.2 removes `/or` and `/oreregenerator`; use `/blocksregenerator` or `/bregen`. Restart the server after replacing the JAR so Bukkit registers the new commands. `/blocksregenerator reload` reloads configuration and messages, and does not apply a new JAR.
 
 ## Quick start: a regenerating mine
 
-Run `/br wand` in game. Left-click one corner and right-click the opposite corner. Both corners must be in the same world. Then run:
+Run `/blocksregenerator wand` in game. Left-click one corner and right-click the opposite corner. Both corners must be in the same world. Then run:
 
 ```text
-/br create mine
-/br block add mine DIAMOND_ORE STONE 5 10
-/br block add mine IRON_ORE STONE 3
-/br setting set mine auto-inventory true
-/br edit mine
+/blocksregenerator create mine
+/blocksregenerator block add mine DIAMOND_ORE STONE 5 10
+/blocksregenerator block add mine IRON_ORE STONE 3
+/blocksregenerator setting set mine auto-inventory true
+/blocksregenerator edit mine
 ```
 
 Place ore in the selected area before testing. Diamond ore regenerates after a random 5–10 seconds, and iron ore after exactly 3 seconds. New local regions deny breaking unconfigured blocks and deny block placement; configure those settings if you want other building activity.
@@ -57,9 +59,9 @@ Place ore in the selected area before testing. Diamond ore regenerates after a r
 For a mature wheat farm, select another area and run:
 
 ```text
-/br create farm
-/br block add farm crop:WHEAT_SEEDS@7 AIR 10
-/br setting set farm allow-block-trampling false
+/blocksregenerator create farm
+/blocksregenerator block add farm crop:WHEAT_SEEDS@7 AIR 10
+/blocksregenerator setting set farm allow-block-trampling false
 ```
 
 This rule matches wheat at age 7 and restores its captured age after ten seconds. Younger wheat does not match the rule. Use `crop:WHEAT_SEEDS` without an age to match any age.
@@ -67,8 +69,8 @@ This rule matches wheat at age 7 and restores its captured age after ten seconds
 For a whole world, use the console or run in game:
 
 ```text
-/br global world world_mines
-/br block add world_mines DIAMOND_ORE STONE 10
+/blocksregenerator global world world_mines
+/blocksregenerator block add world_mines DIAMOND_ORE STONE 10
 ```
 
 Replace `world` with a loaded world's actual name. A global region starts with ordinary breaking and placement enabled. Console commands omit the initial `/`.
@@ -94,9 +96,9 @@ The claim bypass permission affects this plugin's checks. It does not grant buil
 
 ## Commands and menus
 
-WorldEdit/FAWE may claim the `/br` alias for brushes. If `/br` opens another plugin or reports an unknown sub-command, use `/blocksregenerator` instead throughout this guide. The fully qualified `/blocksregenerator:blocksregenerator` command explicitly selects this plugin. No command alias takeover is required.
+The primary command is `/blocksregenerator`, with `/bregen` and `/br` as short aliases. WorldEdit/FAWE may claim `/br` for brushes; use `/blocksregenerator` or `/bregen` on those servers. The fully qualified `/blocksregenerator:blocksregenerator` command explicitly selects this plugin. The old `/or` and `/oreregenerator` command aliases were removed in 1.0.2.
 
-Use `/br` to open the inventory editor. Aliases are `/blocksregenerator`, `/or`, and `/oreregenerator`. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
+Use `/blocksregenerator` to open the inventory editor. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
 
 All successful edits are saved. Changing a region's rules or chains restores its active regenerations before adopting the new configuration. GUI entries are read again by ID before edits, so two administrators do not overwrite each other's unrelated changes.
 
@@ -104,33 +106,33 @@ All successful edits are saved. Changing a region's rules or chains restores its
 
 | Command | Purpose |
 | --- | --- |
-| `/br wand` | Get the selection stick; left/right click sets corners one/two |
-| `/br pos1`, `/br pos2` | Select the block at your current position |
-| `/br position one`, `/br position two` | Long forms; `position` also accepts `pos`, `1`, `2` |
-| `/br create <region>` | Create an inclusive cuboid from both selected corners |
-| `/br select <region>` | Copy an existing cuboid into your current selection |
-| `/br global <world> [region]` | Create one global region for a loaded world |
-| `/br list` | List region IDs |
-| `/br edit <region>` | Open the region editor |
-| `/br delete <region>` | Delete a region and restore its active blocks |
-| `/br priority <region> <integer>` | Set overlap precedence; larger values win |
-| `/br regenerate <region>` | Restore active blocks immediately; aliases `restore`, `regen` |
-| `/br add` | Add a block type by left-clicking a world block; sneak + right-click exits |
-| `/br edges` | Toggle personal region boundaries; aliases `borders`, `visualize` |
+| `/blocksregenerator wand` | Get the selection stick; left/right click sets corners one/two |
+| `/blocksregenerator pos1`, `/blocksregenerator pos2` | Select the block at your current position |
+| `/blocksregenerator position one`, `/blocksregenerator position two` | Long forms; `position` also accepts `pos`, `1`, `2` |
+| `/blocksregenerator create <region>` | Create an inclusive cuboid from both selected corners |
+| `/blocksregenerator select <region>` | Copy an existing cuboid into your current selection |
+| `/blocksregenerator global <world> [region]` | Create one global region for a loaded world |
+| `/blocksregenerator list` | List region IDs |
+| `/blocksregenerator edit <region>` | Open the region editor |
+| `/blocksregenerator delete <region>` | Delete a region and restore its active blocks |
+| `/blocksregenerator priority <region> <integer>` | Set overlap precedence; larger values win |
+| `/blocksregenerator regenerate <region>` | Restore active blocks immediately; aliases `restore`, `regen` |
+| `/blocksregenerator add` | Add a block type by left-clicking a world block; sneak + right-click exits |
+| `/blocksregenerator edges` | Toggle personal region boundaries; aliases `borders`, `visualize` |
 
 Region IDs contain 1-64 letters, numbers, underscores, or hyphens. Both selection corners must be in the same world. Global regions start with ordinary block breaking and placement enabled. Their other settings use the defaults in the reference contract.
 
-Original command forms remain accepted: `/or region save <region>`, `/or region delete <region>`, `/or region list`, `/or region global create <world>`, and `/or region edit ...` for block/setting/chain operations. `/br save` aliases `create`; `/br remove` aliases `delete`.
+Original command forms remain accepted: `/blocksregenerator region save <region>`, `/blocksregenerator region delete <region>`, `/blocksregenerator region list`, `/blocksregenerator region global create <world>`, and `/blocksregenerator region edit ...` for block/setting/chain operations. `/blocksregenerator save` aliases `create`; `/blocksregenerator remove` aliases `delete`.
 
 ### Blocks
 
 | Command | Purpose |
 | --- | --- |
-| `/br block add <region> <original> <replacement> <minimum> [maximum]` | Add a rule with seconds of delay |
-| `/br block remove <region> <block>` | Remove a rule; `delete` also works |
-| `/br block delay <region> <block> <minimum> [maximum]` | Change its timer |
-| `/br block replace <region> <block> <replacement>` | Change its temporary block |
-| `/br block age <region> <block> <-1|age>` | Change an existing crop rule's exact required age |
+| `/blocksregenerator block add <region> <original> <replacement> <minimum> [maximum]` | Add a rule with seconds of delay |
+| `/blocksregenerator block remove <region> <block>` | Remove a rule; `delete` also works |
+| `/blocksregenerator block delay <region> <block> <minimum> [maximum]` | Change its timer |
+| `/blocksregenerator block replace <region> <block> <replacement>` | Change its temporary block |
+| `/blocksregenerator block age <region> <block> <-1|age>` | Change an existing crop rule's exact required age |
 
 `<block>` accepts the original ID, UUID, or the rule's 1-based registration number. Material names are case-insensitive. `<original>` and `<replacement>` accept these forms:
 
@@ -143,7 +145,7 @@ Delay limits are `0 <= minimum <= maximum <= 31536000`. Omitting maximum uses an
 
 ### Settings
 
-Use `/br setting get <region> <setting>` or `/br setting set <region> <setting> <value>`. Boolean settings require `true` or `false`:
+Use `/blocksregenerator setting get <region> <setting>` or `/blocksregenerator setting set <region> <setting> <value>`. Boolean settings require `true` or `false`:
 
 | Setting | Default |
 | --- | --- |
@@ -163,16 +165,16 @@ Chains contain ordered block stages. Mining advances toward the last stage; rege
 
 | Command | Purpose |
 | --- | --- |
-| `/br chain add <region> <name>` | Create an empty chain |
-| `/br chain remove <region> <chain>` | Remove a chain |
-| `/br chain rename <region> <chain> <name>` | Change its name |
-| `/br chain style <region> <chain> <direct|staged|same-timer>` | Choose regeneration style |
-| `/br chain final <region> <chain> <true|false>` | Allow or deny mining its final stage |
-| `/br chain delay <region> <chain> <minimum> [maximum]` | Set every stage's delay |
-| `/br chain stage <region> <chain> add <block> [minimum] [maximum]` | Append a stage |
-| `/br chain stage <region> <chain> remove <stage>` | Remove a 1-based stage |
-| `/br chain stage <region> <chain> move <from> <to>` | Reorder stages, keeping timers with them |
-| `/br chain stage <region> <chain> delay <stage> <minimum> [maximum]` | Set one stage's delay |
+| `/blocksregenerator chain add <region> <name>` | Create an empty chain |
+| `/blocksregenerator chain remove <region> <chain>` | Remove a chain |
+| `/blocksregenerator chain rename <region> <chain> <name>` | Change its name |
+| `/blocksregenerator chain style <region> <chain> <direct|staged|same-timer>` | Choose regeneration style |
+| `/blocksregenerator chain final <region> <chain> <true|false>` | Allow or deny mining its final stage |
+| `/blocksregenerator chain delay <region> <chain> <minimum> [maximum]` | Set every stage's delay |
+| `/blocksregenerator chain stage <region> <chain> add <block> [minimum] [maximum]` | Append a stage |
+| `/blocksregenerator chain stage <region> <chain> remove <stage>` | Remove a 1-based stage |
+| `/blocksregenerator chain stage <region> <chain> move <from> <to>` | Reorder stages, keeping timers with them |
+| `/blocksregenerator chain stage <region> <chain> delay <stage> <minimum> [maximum]` | Set one stage's delay |
 
 `direct` restores the initial block in one step. `staged` restores one step at a time using each stage's delay. `same-timer` restores one step at a time using the first stage's delay. Crops and furniture are standalone rules, rather than chain stages.
 
@@ -182,14 +184,14 @@ The GUI exposes chain creation, renaming, stage selection/replacement, move earl
 
 | Command | Purpose |
 | --- | --- |
-| `/br copy <region> [all|blocks|chains]` | Copy definitions to your personal clipboard |
-| `/br paste <region>` | Replace copied block/chain collections with independent copies |
-| `/br import oreregenerator` | Import original plugin data from the adjacent `OreRegenerator` plugin directory |
-| `/br import ultimate-regen` | Import Ultimate_BlockRegeneration definitions |
-| `/br import minexfarm-regen` | Import MineXFarmRegen definitions |
-| `/br reload` | Reload configuration/messages; alias `rl` |
-| `/br eval <expression>` | Evaluate a supported numeric expression |
-| `/br help` | Show command reference |
+| `/blocksregenerator copy <region> [all|blocks|chains]` | Copy definitions to your personal clipboard |
+| `/blocksregenerator paste <region>` | Replace copied block/chain collections with independent copies |
+| `/blocksregenerator import oreregenerator` | Import original plugin data from the adjacent `OreRegenerator` plugin directory |
+| `/blocksregenerator import ultimate-regen` | Import Ultimate_BlockRegeneration definitions |
+| `/blocksregenerator import minexfarm-regen` | Import MineXFarmRegen definitions |
+| `/blocksregenerator reload` | Reload configuration/messages; alias `rl` |
+| `/blocksregenerator eval <expression>` | Evaluate a supported numeric expression |
+| `/blocksregenerator help` | Show command reference |
 
 `convert` aliases `import`. A clipboard copies blocks plus chains by default; selecting only one replaces only that collection when pasted. Clipboards, selection, prompts, and manual mode are cleared on disconnect. GUI deletion, clipboard paste, conflict merge, and bulk timers require an in-game confirmation. Direct commands take effect immediately.
 
@@ -198,25 +200,25 @@ Lists have bounded pages and case-insensitive search. The search button opens a 
 ### Chain example
 
 ```text
-/br chain add mine ore_cycle
-/br chain stage mine ore_cycle add DIAMOND_ORE 10
-/br chain stage mine ore_cycle add GOLD_ORE 5
-/br chain stage mine ore_cycle add STONE 3
-/br chain style mine ore_cycle staged
-/br chain final mine ore_cycle false
+/blocksregenerator chain add mine ore_cycle
+/blocksregenerator chain stage mine ore_cycle add DIAMOND_ORE 10
+/blocksregenerator chain stage mine ore_cycle add GOLD_ORE 5
+/blocksregenerator chain stage mine ore_cycle add STONE 3
+/blocksregenerator chain style mine ore_cycle staged
+/blocksregenerator chain final mine ore_cycle false
 ```
 
 Use a region without standalone DIAMOND_ORE rules for this example, or remove those rules first. Mining diamond ore advances to gold ore; mining gold advances to stone. With final-stage mining disabled, stone cannot be mined. Regeneration walks back through the stages. If final-stage mining is enabled and that stage is mined out, recovery restores the final stage first before continuing toward the initial block.
 
 ### Using the menus
 
-Open `/br`, select a region, then choose its block rules, chains or settings. The editors support item selection, timer changes, chain reordering, conflict merging and personal region outlines. `/br add` provides a manual world-click workflow.
+Open `/blocksregenerator`, select a region, then choose its block rules, chains or settings. The editors support item selection, timer changes, chain reordering, conflict merging and personal region outlines. `/blocksregenerator add` provides a manual world-click workflow.
 
 Search buttons and numeric/name fields use private chat prompts. Prompts expire after two minutes; type `cancel` to leave without applying input. Right-click a search button to clear the filter. Selecting an item from your inventory does not consume it. Menu deletion, paste, conflict merge and bulk timer changes request confirmation; direct commands apply immediately.
 
 ## Configuration
 
-Edit `plugins/BlocksRegenerator/config.yml`, then run `/br reload`. Messages are in `messages.yml`; regions and active recovery snapshots are in `data.json`.
+Edit `plugins/BlocksRegenerator/config.yml`, then run `/blocksregenerator reload`. Messages are in `messages.yml`; regions and active recovery snapshots are in `data.json`.
 
 | Configuration key | Default | Purpose |
 | --- | --- | --- |
@@ -244,7 +246,7 @@ Messages support `&` color codes. A `<delay:1000>` suffix throttles that message
 Enable expressions for the region with:
 
 ```text
-/br setting set mine use-advanced-regen-delay true
+/blocksregenerator setting set mine use-advanced-regen-delay true
 ```
 
 Variables are `%min_delay%`, `%max_delay%` and `%player_count%`. Operators are `+ - * / ^`, parentheses and unary signs. Functions are `rUni`, `min`, `max`, `pow`, `abs`, `sqrt`, `floor`, `ceil`, `round`, `sin`, `cos`, `ln` and `log`; constants are `pi` and `e`.
@@ -255,7 +257,7 @@ Example `advanced.regen-delay.expression`:
 %min_delay% + (%max_delay% - %min_delay%) * rUni(0, 1) / (1 + %player_count%)
 ```
 
-Use `/br eval <expression>` to check a formula. Invalid expressions log a warning and fall back to the rule's validated delay range. This bounded evaluator supports the documented grammar rather than every expression supported by the original plugin's math library.
+Use `/blocksregenerator eval <expression>` to check a formula. Invalid expressions log a warning and fall back to the rule's validated delay range. This bounded evaluator supports the documented grammar rather than every expression supported by the original plugin's math library.
 
 ## Optional integrations
 
@@ -276,7 +278,7 @@ Third-party support depends on that provider's installed version. The automated 
 
 ## Saving, restarts and recovery
 
-Successful administrative edits are saved before confirmation. Editing or deleting a region restores its active blocks first. `/br regenerate <region>` restores only blocks with pending regeneration; it does not rebuild an entire mine.
+Successful administrative edits are saved before confirmation. Editing or deleting a region restores its active blocks first. `/blocksregenerator regenerate <region>` restores only blocks with pending regeneration; it does not rebuild an entire mine.
 
 Timers preserve their remaining milliseconds across a clean restart. Time does not count down while the server is stopped. Unloaded worlds/chunks keep their recovery entries; timers never force chunks to load. Load affected chunks before editing, deleting or manually restoring a region with pending blocks.
 
@@ -292,9 +294,9 @@ Stop the server, remove the previous regeneration plugin JAR and preserve its da
 
 | Source | Import command | Source folder |
 | --- | --- | --- |
-| OreRegenerator | `/br import oreregenerator` | `plugins/OreRegenerator/` |
-| Ultimate_BlockRegeneration | `/br import ultimate-regen` | `plugins/Ultimate_BlockRegeneration/` |
-| MineXFarmRegen | `/br import minexfarm-regen` | `plugins/MineXFarmRegen/` |
+| OreRegenerator | `/blocksregenerator import oreregenerator` | `plugins/OreRegenerator/` |
+| Ultimate_BlockRegeneration | `/blocksregenerator import ultimate-regen` | `plugins/Ultimate_BlockRegeneration/` |
+| MineXFarmRegen | `/blocksregenerator import minexfarm-regen` | `plugins/MineXFarmRegen/` |
 
 OreRegenerator migration reads `regions.json` and optional `persistence.json`. Imports reject existing region ID collisions and preserve their source folders. Do not run two regeneration plugins over the same blocks. This plugin is a new implementation based on the observed behavior of OreRegenerator 2.6.2; see the [reconstruction record](docs/REVERSE_ENGINEERING.md).
 
@@ -302,14 +304,15 @@ OreRegenerator migration reads `regions.json` and optional `persistence.json`. I
 
 | Symptom | Check |
 | --- | --- |
-| `Unsupported API version 26.3` on 1.21.11 | Replace BlocksRegenerator 1.0.0 with 1.0.1; remove the old JAR |
+| `Unsupported API version 26.3` on 1.21.11 | Replace BlocksRegenerator 1.0.0 with 1.0.2; remove the old JAR |
 | Java is not recognized or the terminal closes immediately | Configure a valid Java executable/JAVA_HOME, run the launcher from a terminal and keep its output visible |
 | `UnsupportedClassVersionError` | Check the Java version used by the actual server launcher; 26.x needs Java 25 |
 | A mined block does not regenerate | Check selected world/bounds, winning region priority, rule material/crop age, other plugins' cancellation and console errors |
 | A pending block has not returned | Load its chunk and verify its custom-content provider is available |
 | Non-rule blocks cannot be broken or placed | Check `allow-block-break`, `allow-block-place` and the claim plugin's permissions |
-| No permission for `/br` | Grant `blocksregenerator.admin` or use the console/operator account |
-| `/br` shows brush commands | WorldEdit/FAWE owns that alias; use `/blocksregenerator` or `/blocksregenerator:blocksregenerator` |
+| No permission for `/blocksregenerator` | Grant `blocksregenerator.admin` or use the console/operator account |
+| `/br` shows brush commands | WorldEdit/FAWE owns that alias; use `/blocksregenerator`, `/bregen` or `/blocksregenerator:blocksregenerator` |
+| `/or` or `/oreregenerator` no longer works | Use `/blocksregenerator` or `/bregen`; legacy command aliases were removed in 1.0.2 |
 | An import is refused | Check source folder, input format and existing region ID collisions; preserve backups |
 
 Report issues with the server version, Java version, plugin version, relevant configuration and console error. Remove passwords and private data from logs before sharing them.
@@ -330,7 +333,7 @@ Linux/macOS:
 ./mvnw verify
 ```
 
-The result is `target/BlocksRegenerator-1.0.1.jar`. The default build uses the oldest supported API so the same artifact runs across the supported range. To verify a newer API, use JDK 25, for example:
+The result is `target/BlocksRegenerator-1.0.2.jar`. The default build uses the oldest supported API so the same artifact runs across the supported range. To verify a newer API, use JDK 25, for example:
 
 ```sh
 ./mvnw -Dspigot.version=26.3-R0.1-SNAPSHOT clean verify

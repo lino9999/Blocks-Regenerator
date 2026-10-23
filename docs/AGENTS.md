@@ -45,7 +45,7 @@ Use JDK 21 or newer and the pinned Maven Wrapper: `./mvnw verify` or `mvnw.cmd v
 
 Tests should verify meaningful behavior: cancellation, item conservation, timer ownership, unloaded worlds, migration, malformed data, permissions and reload/shutdown. Do not add tests that only repeat implementation details.
 
-The built plugin is target/BlocksRegenerator-1.0.1.jar. Do not commit target, .tools, .work, original JARs, Minecraft worlds or logs. Read docs/VERIFICATION.md for the actual verification scope and remaining live integration gaps. Keep the README command and permission tables aligned with docs/COMMANDS.md and plugin.yml when behavior changes.
+The built plugin is target/BlocksRegenerator-1.0.2.jar. Do not commit target, .tools, .work, original JARs, Minecraft worlds or logs. Read docs/VERIFICATION.md for the actual verification scope and remaining live integration gaps. Keep the README command and permission tables aligned with docs/COMMANDS.md and plugin.yml when behavior changes. The primary command is /blocksregenerator, with /bregen and /br aliases; do not restore the removed /or and /oreregenerator command aliases.
 
 ## Original behavior evidence
 

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.lino</groupId>
   <artifactId>blocks-regenerator</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <name>BlocksRegenerator</name>
   <description>Region based block and crop regeneration for Spigot</description>
   <url>https://github.com/lino9999/Blocks-Regenerator</url>

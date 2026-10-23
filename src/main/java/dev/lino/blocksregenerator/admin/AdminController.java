@@ -238,7 +238,7 @@ public final class AdminController implements CommandExecutor, TabCompleter, Lis
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("BlocksRegenerator Selection Wand");
-        meta.setLore(List.of("Left-click: corner one", "Right-click: corner two", "Save with /br create <region>"));
+        meta.setLore(List.of("Left-click: corner one", "Right-click: corner two", "Save with /blocksregenerator create <region>"));
         meta.getPersistentDataContainer().set(wandKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         if (player.getInventory().firstEmpty() < 0) {

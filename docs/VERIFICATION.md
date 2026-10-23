@@ -1,5 +1,15 @@
 # Verification
 
+## Version 1.0.2 command verification
+
+Verified on 24 October 2026. The Java 21 baseline build passes 71 tests with zero failures or errors. The primary command is `/blocksregenerator`, with `/bregen` and `/br` aliases. The old `/or` and `/oreregenerator` command aliases are removed. Help, wand instructions and the user guides now consistently use the primary command. Existing permission nodes and importer source identifiers remain compatible.
+
+An isolated Paper 1.21.11 build 130 on Java 21 passed 11 live checks: enabled plugin/version, primary ownership, both short aliases, namespaced primary command, absence of both legacy aliases and the old namespaced alias, and console dispatch through the primary command and `/bregen`. The console returned the expected expression result, 5.0.
+
+The same run verified Bukkit/Paper's next-start update mechanism: a 1.0.2 JAR staged in `plugins/update/` under the installed JAR filename replaced 1.0.1 before loading, and the loaded artifact's checksum matched the staged artifact. A full server restart is required; configuration reload does not change registered commands. Existing WorldEdit/FAWE ownership of `/br` is left intact; use `/blocksregenerator` or `/bregen` on that installation.
+
+Artifact: `target/BlocksRegenerator-1.0.2.jar`. SHA-256: `76b014d11802cc46526c1b803b061aafa550608c995da2487e5c8d70bb3705b9`. Local evidence: `.work/command-names-build.log`, `.work/command-probe/` and `.work/command-names-paper.log`. The compatibility and optional-integration limits recorded for 1.0.1 still apply.
+
 ## Version 1.0.1 compatibility verification
 
 Verified on 24 October 2026. The release is built against Spigot 1.21.11 with Java 21 bytecode and declares `api-version: '1.21.11'`. Minecraft 26.x servers still require Java 25.
