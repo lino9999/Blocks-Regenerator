@@ -36,12 +36,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.random.RandomGenerator;
 
 public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBackend, Listener {
     private final RegionIndex regions = new RegionIndex();
     private final Clock clock = Clock.systemUTC();
-    private final RandomGenerator random = RandomGenerator.getDefault();
+    private final RandomGenerator random = new Random();
     private IntegrationRegistry integrations;
     private RegenerationEngine engine;
     private RegenerationListener listener;

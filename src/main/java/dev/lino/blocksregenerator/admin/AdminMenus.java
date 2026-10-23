@@ -1,5 +1,6 @@
 package dev.lino.blocksregenerator.admin;
 
+import dev.lino.blocksregenerator.bukkit.MaterialResolver;
 import dev.lino.blocksregenerator.model.Bounds;
 import dev.lino.blocksregenerator.model.DelayRange;
 import dev.lino.blocksregenerator.model.Placeable;
@@ -63,7 +64,7 @@ final class AdminMenus {
                 overlaps(region) ? "Warning: overlapping cuboids" : "Click to change icon"), event -> {
             menu.picker = null;
             prompt(player, "Enter an item material for the icon.", text -> {
-                Material material = Material.matchMaterial(text);
+                Material material = MaterialResolver.match(text);
                 if (material == null || !material.isItem()) {
                     throw new IllegalArgumentException("Choose an item material.");
                 }
@@ -72,7 +73,7 @@ final class AdminMenus {
             }, () -> region(player, regionId));
         });
         button(menu, 20, Material.STONE, "Regenerating blocks", event -> rules(player, regionId, 0, ""));
-        button(menu, 22, Material.IRON_CHAIN, "Regen chains", event -> chains(player, regionId, 0, ""));
+        button(menu, 22, MaterialResolver.chainIcon(), "Regen chains", event -> chains(player, regionId, 0, ""));
         button(menu, 24, Material.COMPARATOR, "Region settings", event -> settings(player, regionId));
         button(menu, 29, Material.CLOCK, "Restore active blocks", event -> confirm(player, "Restore active blocks?", () -> {
             backend.restore(regionId);
@@ -166,7 +167,7 @@ final class AdminMenus {
         }
         Region region = commands.region(regionId);
         if (replacementConflict(region, rule)) {
-            button(menu, 40, Material.IRON_CHAIN, "Merge replacement conflict into a chain", event -> confirm(player, "Merge conflicting rules?", () -> merge(player, regionId, ruleId), () -> rule(player, regionId, ruleId)));
+            button(menu, 40, MaterialResolver.chainIcon(), "Merge replacement conflict into a chain", event -> confirm(player, "Merge conflicting rules?", () -> merge(player, regionId, ruleId), () -> rule(player, regionId, ruleId)));
         }
         button(menu, 45, Material.BARRIER, "Delete rule", event -> confirm(player, "Delete this rule?", () -> {
             commands.removeRule(regionId, ruleId);
@@ -179,7 +180,7 @@ final class AdminMenus {
         Region region = commands.region(regionId);
         List<RegenChain> chains = region.chains().stream().filter(c -> contains(c.name(), filter)).sorted(Comparator.comparing(RegenChain::name)).toList();
         AdminSessions.Menu menu = list(player, "Chains: " + regionId, chains, page,
-                c -> item(Material.IRON_CHAIN, c.name(), "Stages: " + c.stages().size(), "Style: " + c.style(),
+                c -> item(MaterialResolver.chainIcon(), c.name(), "Stages: " + c.stages().size(), "Style: " + c.style(),
                         "Final stage: " + (c.lastStageBreakable() ? "breakable" : "unbreakable"), chainConflict(region, c) ? "Warning: entry block conflicts" : "Click to edit"),
                 c -> chain(player, regionId, c.id(), 0), next -> chains(player, regionId, next, filter), () -> region(player, regionId));
         button(menu, 46, Material.LIME_WOOL, "Create chain", event -> prompt(player, "Enter the new chain name.", text -> {
@@ -505,7 +506,7 @@ final class AdminMenus {
     }
 
     private static Material material(String id) {
-        Material material = Material.matchMaterial(id);
+        Material material = MaterialResolver.match(id);
         return material == null || !material.isItem() || material.isAir() ? Material.STONE : material;
     }
 

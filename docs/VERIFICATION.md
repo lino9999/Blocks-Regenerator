@@ -1,6 +1,38 @@
 # Verification
 
-Verified on 23 October 2026 for Spigot 26.3 and Java 25.
+## Version 1.0.1 compatibility verification
+
+Verified on 24 October 2026. The release is built against Spigot 1.21.11 with Java 21 bytecode and declares `api-version: '1.21.11'`. Minecraft 26.x servers still require Java 25.
+
+| API version | Java | Automated result |
+| --- | --- | --- |
+| 1.21.11 | 21 | 71 tests, zero failures or errors |
+| 1.21.11 | 25 | 71 tests, zero failures or errors |
+| 26.1 | 25 | 71 tests, zero failures or errors |
+| 26.1.1 | 25 | 71 tests, zero failures or errors |
+| 26.1.2 | 25 | 71 tests, zero failures or errors |
+| 26.2 | 25 | 71 tests, zero failures or errors |
+| 26.3 | 25 | 71 tests, zero failures or errors |
+
+The additional tests exercise material aliases in both directions, namespaced legacy input, native lookup precedence and unknown material rejection. GitHub Actions uses the same API/Java matrix. The shipped artifact comes from the baseline build, rather than one of the newer-API builds.
+
+Live endpoint checks use the identical shaded JAR on isolated loopback servers: Paper 1.21.11 build 130 on Temurin Java 21.0.12.1, and Spigot 26.3 build 4663 on Microsoft Java 25.0.1. Both passed 45 Bukkit checks: enabled plugin/version, legacy/native chain material lookup, ore and crop snapshots, stairs, trapdoors, both door halves, timer ownership, exact restoration and all chain styles. The Spigot run also preserved three region definitions created by 1.0.0.
+
+Paper console checks verified global creation, legacy material input, mature crop registration, the corrected trampling setting name, chain creation/stages/style/final-stage settings, expressions, reload, listing and deletion. Both isolated servers shut down cleanly. These probes are temporary verification plugins; no real player connected.
+
+The first Java 21 Paper startup exposed a service-provider failure in `RandomGenerator.getDefault()` before plugin enable. The release uses `java.util.Random`, which implements the same consumed interface without service-provider discovery. The successful live runs above were performed after this correction; a passing world probe is counted only when it also asserts that BlocksRegenerator 1.0.1 is enabled.
+
+The target Skyblock installation also completed startup on its existing Paper 1.21.11 build 130 with Java 25 and 39 installed plugins. BlocksRegenerator 1.0.1 enabled successfully; the previous incompatible 1.0.0 JAR was backed up outside the plugins directory. WorldEdit/FAWE owns `/br` on this installation, so the guide documents `/blocksregenerator` and the fully qualified command as alternatives. Existing WorldEdit/FAWE duplicate-plugin errors were unrelated and were left unchanged. This verifies coexistence at startup, not player-driven claims or custom-content behavior.
+
+API compilation/testing covers intermediate releases; separate live servers were not started for 26.1, 26.1.1, 26.1.2 or 26.2. Optional provider versions and real-player interactions retain the limits described below. Material aliases do not provide newer game content on older servers, and Minecraft world/snapshot downgrades are outside the supported workflow.
+
+Local evidence: `.work/compat-final-java21.log`, `.work/compat-api-<version>.log`, `.work/compat-paper-1.21.11-java21.log` and `.work/compat-spigot-26.3-java25.log`. Initial failed attempts are retained separately and are not counted as passing verification.
+
+Release artifact: `target/BlocksRegenerator-1.0.1.jar`. SHA-256: `0e5d05f01c9680176958be6161772d89bd0ada24f958a7c807217eafc3392b31`.
+
+## Historical version 1.0.0 verification
+
+The sections below record the original release verified on 23 October 2026 for Spigot 26.3 and Java 25. Its artifact identity applies to 1.0.0 only.
 
 ## Automated build
 

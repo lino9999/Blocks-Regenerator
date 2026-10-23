@@ -1,5 +1,6 @@
 package dev.lino.blocksregenerator.integration;
 
+import dev.lino.blocksregenerator.bukkit.MaterialResolver;
 import dev.lino.blocksregenerator.model.Placeable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public final class IntegrationRegistry {
     public ItemStack displayItem(Placeable placeable) {
         validate(placeable);
         if (placeable.vanilla()) {
-            Material icon = Material.matchMaterial(placeable.id());
+            Material icon = MaterialResolver.match(placeable.id());
             return new ItemStack(icon != null && icon.isItem() && !icon.isAir() ? icon : Material.BARRIER);
         }
         try {
@@ -291,7 +292,7 @@ public final class IntegrationRegistry {
     }
 
     private Material material(Placeable placeable) {
-        Material material = Material.matchMaterial(placeable.id());
+        Material material = MaterialResolver.match(placeable.id());
         if (placeable.type().equals("crop") && material != null) material = Crops.BLOCKS.get(material);
         if (material == null) throw new IllegalArgumentException("Unknown " + placeable.type() + ": " + placeable.id());
         return material;

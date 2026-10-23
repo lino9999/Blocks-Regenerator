@@ -1,6 +1,6 @@
 # Editing BlocksRegenerator efficiently
 
-Author: Lino. Target: Spigot 26.3, Java 25. Keep all code, configuration, documentation, and messages in English. Do not add comments to Java, XML, YAML, or scripts.
+Author: Lino. Target: Spigot/Paper 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3. Compile against Spigot 1.21.11 with Java 21 bytecode; Minecraft 26.x servers require Java 25. Keep all code, configuration, documentation, and messages in English. Do not add comments to Java, XML, YAML, or scripts.
 
 Vendored Apache Maven Wrapper scripts retain their upstream license headers. Preserve bundled third-party license notices.
 
@@ -16,6 +16,7 @@ Start with README.md and this file. Use rg for targeted searches. Do not recursi
 | Mining, drops, protection, stacks | bukkit/RegenerationListener.java, bukkit/BukkitWorldAccess.java |
 | Commands, wand, GUI, conversations | admin/AdminController.java, admin/AdminCommands.java, admin/AdminMenus.java, admin/AdminSessions.java |
 | Custom content and land claims | integration/IntegrationRegistry.java, integration/ClaimsService.java, docs/INTEGRATIONS.md |
+| Minecraft/API compatibility and material aliases | pom.xml, src/main/resources/plugin.yml, bukkit/MaterialResolver.java, .github/workflows/build.yml |
 | JSON format and durability | storage/StateCodec.java, storage/StateStore.java |
 | Importing older plugin data | storage/LegacyImporter.java, docs/ORIGINAL_CONTRACT.md |
 | Delay formulas | engine/DelayExpression.java |
@@ -40,11 +41,11 @@ Paths without a source prefix in the table are below src/main/java/dev/lino/bloc
 
 ## Verification
 
-Use JDK 25 and Maven 3.9 or newer. Run `mvn verify` for a complete build. Focus tests with `mvn -Dtest=RegenerationEngineTest test` or the test class relevant to the changed boundary.
+Use JDK 21 or newer and the pinned Maven Wrapper: `./mvnw verify` or `mvnw.cmd verify`. Focus tests with `./mvnw -Dtest=RegenerationEngineTest test` or the test class relevant to the changed boundary. For compatibility changes, verify all supported APIs with JDK 25 and `-Dspigot.version=<version>-R0.1-SNAPSHOT clean verify`, plus the default build on JDK 21. Publish the baseline build rather than an artifact compiled against a newer API. Keep the minimum API in plugin.yml aligned with pom.xml and do not introduce newer static API links without a compatibility path.
 
 Tests should verify meaningful behavior: cancellation, item conservation, timer ownership, unloaded worlds, migration, malformed data, permissions and reload/shutdown. Do not add tests that only repeat implementation details.
 
-The built plugin is target/BlocksRegenerator-1.0.0.jar. Do not commit target, .tools, .work, original JARs, Minecraft worlds or logs. Read docs/VERIFICATION.md for the actual verification scope and remaining live integration gaps.
+The built plugin is target/BlocksRegenerator-1.0.1.jar. Do not commit target, .tools, .work, original JARs, Minecraft worlds or logs. Read docs/VERIFICATION.md for the actual verification scope and remaining live integration gaps. Keep the README command and permission tables aligned with docs/COMMANDS.md and plugin.yml when behavior changes.
 
 ## Original behavior evidence
 
