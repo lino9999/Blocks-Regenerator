@@ -2,6 +2,8 @@
 
 Use `/br` to open the inventory editor. Aliases are `/blocksregenerator`, `/or`, and `/oreregenerator`. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
 
+WorldEdit/FAWE may use `/br` for brushes. If that alias belongs to another plugin, replace `/br` with `/blocksregenerator` in these examples. `/blocksregenerator:blocksregenerator` explicitly selects this plugin's command.
+
 All successful edits are saved. Changing a region's rules or chains restores its active regenerations before adopting the new configuration. GUI entries are read again by ID before edits, so two administrators do not overwrite each other's unrelated changes.
 
 ## Selection and regions

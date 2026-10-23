@@ -94,6 +94,8 @@ The claim bypass permission affects this plugin's checks. It does not grant buil
 
 ## Commands and menus
 
+WorldEdit/FAWE may claim the `/br` alias for brushes. If `/br` opens another plugin or reports an unknown sub-command, use `/blocksregenerator` instead throughout this guide. The fully qualified `/blocksregenerator:blocksregenerator` command explicitly selects this plugin. No command alias takeover is required.
+
 Use `/br` to open the inventory editor. Aliases are `/blocksregenerator`, `/or`, and `/oreregenerator`. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
 
 All successful edits are saved. Changing a region's rules or chains restores its active regenerations before adopting the new configuration. GUI entries are read again by ID before edits, so two administrators do not overwrite each other's unrelated changes.
@@ -307,6 +309,7 @@ OreRegenerator migration reads `regions.json` and optional `persistence.json`. I
 | A pending block has not returned | Load its chunk and verify its custom-content provider is available |
 | Non-rule blocks cannot be broken or placed | Check `allow-block-break`, `allow-block-place` and the claim plugin's permissions |
 | No permission for `/br` | Grant `blocksregenerator.admin` or use the console/operator account |
+| `/br` shows brush commands | WorldEdit/FAWE owns that alias; use `/blocksregenerator` or `/blocksregenerator:blocksregenerator` |
 | An import is refused | Check source folder, input format and existing region ID collisions; preserve backups |
 
 Report issues with the server version, Java version, plugin version, relevant configuration and console error. Remove passwords and private data from logs before sharing them.
