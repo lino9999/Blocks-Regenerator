@@ -1,8 +1,8 @@
 # Administration
 
-Use `/br` to open the inventory editor. Aliases are `/blocksregenerator`, `/or`, and `/oreregenerator`. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
+Use `/blocksregenerator` to open the inventory editor. Short aliases are `/bregen` and `/br`. The old `/or` and `/oreregenerator` command aliases were removed in 1.0.2. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
 
-WorldEdit/FAWE may use `/br` for brushes. If that alias belongs to another plugin, replace `/br` with `/blocksregenerator` in these examples. `/blocksregenerator:blocksregenerator` explicitly selects this plugin's command.
+WorldEdit/FAWE may use `/br` for brushes. Use `/blocksregenerator` or `/bregen` to avoid that collision. `/blocksregenerator:blocksregenerator` explicitly selects this plugin's command.
 
 All successful edits are saved. Changing a region's rules or chains restores its active regenerations before adopting the new configuration. GUI entries are read again by ID before edits, so two administrators do not overwrite each other's unrelated changes.
 
@@ -10,33 +10,33 @@ All successful edits are saved. Changing a region's rules or chains restores its
 
 | Command | Purpose |
 | --- | --- |
-| `/br wand` | Get the selection stick; left/right click sets corners one/two |
-| `/br pos1`, `/br pos2` | Select the block at your current position |
-| `/br position one`, `/br position two` | Long forms; `position` also accepts `pos`, `1`, `2` |
-| `/br create <region>` | Create an inclusive cuboid from both selected corners |
-| `/br select <region>` | Copy an existing cuboid into your current selection |
-| `/br global <world> [region]` | Create one global region for a loaded world |
-| `/br list` | List region IDs |
-| `/br edit <region>` | Open the region editor |
-| `/br delete <region>` | Delete a region and restore its active blocks |
-| `/br priority <region> <integer>` | Set overlap precedence; larger values win |
-| `/br regenerate <region>` | Restore active blocks immediately; aliases `restore`, `regen` |
-| `/br add` | Add a block type by left-clicking a world block; sneak + right-click exits |
-| `/br edges` | Toggle personal region boundaries; aliases `borders`, `visualize` |
+| `/blocksregenerator wand` | Get the selection stick; left/right click sets corners one/two |
+| `/blocksregenerator pos1`, `/blocksregenerator pos2` | Select the block at your current position |
+| `/blocksregenerator position one`, `/blocksregenerator position two` | Long forms; `position` also accepts `pos`, `1`, `2` |
+| `/blocksregenerator create <region>` | Create an inclusive cuboid from both selected corners |
+| `/blocksregenerator select <region>` | Copy an existing cuboid into your current selection |
+| `/blocksregenerator global <world> [region]` | Create one global region for a loaded world |
+| `/blocksregenerator list` | List region IDs |
+| `/blocksregenerator edit <region>` | Open the region editor |
+| `/blocksregenerator delete <region>` | Delete a region and restore its active blocks |
+| `/blocksregenerator priority <region> <integer>` | Set overlap precedence; larger values win |
+| `/blocksregenerator regenerate <region>` | Restore active blocks immediately; aliases `restore`, `regen` |
+| `/blocksregenerator add` | Add a block type by left-clicking a world block; sneak + right-click exits |
+| `/blocksregenerator edges` | Toggle personal region boundaries; aliases `borders`, `visualize` |
 
 Region IDs contain 1-64 letters, numbers, underscores, or hyphens. Both selection corners must be in the same world. Global regions start with ordinary block breaking and placement enabled. Their other settings use the defaults in the reference contract.
 
-Original command forms remain accepted: `/or region save <region>`, `/or region delete <region>`, `/or region list`, `/or region global create <world>`, and `/or region edit ...` for block/setting/chain operations. `/br save` aliases `create`; `/br remove` aliases `delete`.
+Original command forms remain accepted: `/blocksregenerator region save <region>`, `/blocksregenerator region delete <region>`, `/blocksregenerator region list`, `/blocksregenerator region global create <world>`, and `/blocksregenerator region edit ...` for block/setting/chain operations. `/blocksregenerator save` aliases `create`; `/blocksregenerator remove` aliases `delete`.
 
 ## Blocks
 
 | Command | Purpose |
 | --- | --- |
-| `/br block add <region> <original> <replacement> <minimum> [maximum]` | Add a rule with seconds of delay |
-| `/br block remove <region> <block>` | Remove a rule; `delete` also works |
-| `/br block delay <region> <block> <minimum> [maximum]` | Change its timer |
-| `/br block replace <region> <block> <replacement>` | Change its temporary block |
-| `/br block age <region> <block> <-1|age>` | Change an existing crop rule's exact required age |
+| `/blocksregenerator block add <region> <original> <replacement> <minimum> [maximum]` | Add a rule with seconds of delay |
+| `/blocksregenerator block remove <region> <block>` | Remove a rule; `delete` also works |
+| `/blocksregenerator block delay <region> <block> <minimum> [maximum]` | Change its timer |
+| `/blocksregenerator block replace <region> <block> <replacement>` | Change its temporary block |
+| `/blocksregenerator block age <region> <block> <-1|age>` | Change an existing crop rule's exact required age |
 
 `<block>` accepts the original ID, UUID, or the rule's 1-based registration number. Material names are case-insensitive. `<original>` and `<replacement>` accept these forms:
 
@@ -49,7 +49,7 @@ Delay limits are `0 <= minimum <= maximum <= 31536000`. Omitting maximum uses an
 
 ## Settings
 
-Use `/br setting get <region> <setting>` or `/br setting set <region> <setting> <value>`. Boolean settings require `true` or `false`:
+Use `/blocksregenerator setting get <region> <setting>` or `/blocksregenerator setting set <region> <setting> <value>`. Boolean settings require `true` or `false`:
 
 | Setting | Default |
 | --- | --- |
@@ -69,16 +69,16 @@ Chains contain ordered block stages. Mining advances toward the last stage; rege
 
 | Command | Purpose |
 | --- | --- |
-| `/br chain add <region> <name>` | Create an empty chain |
-| `/br chain remove <region> <chain>` | Remove a chain |
-| `/br chain rename <region> <chain> <name>` | Change its name |
-| `/br chain style <region> <chain> <direct|staged|same-timer>` | Choose regeneration style |
-| `/br chain final <region> <chain> <true|false>` | Allow or deny mining its final stage |
-| `/br chain delay <region> <chain> <minimum> [maximum]` | Set every stage's delay |
-| `/br chain stage <region> <chain> add <block> [minimum] [maximum]` | Append a stage |
-| `/br chain stage <region> <chain> remove <stage>` | Remove a 1-based stage |
-| `/br chain stage <region> <chain> move <from> <to>` | Reorder stages, keeping timers with them |
-| `/br chain stage <region> <chain> delay <stage> <minimum> [maximum]` | Set one stage's delay |
+| `/blocksregenerator chain add <region> <name>` | Create an empty chain |
+| `/blocksregenerator chain remove <region> <chain>` | Remove a chain |
+| `/blocksregenerator chain rename <region> <chain> <name>` | Change its name |
+| `/blocksregenerator chain style <region> <chain> <direct|staged|same-timer>` | Choose regeneration style |
+| `/blocksregenerator chain final <region> <chain> <true|false>` | Allow or deny mining its final stage |
+| `/blocksregenerator chain delay <region> <chain> <minimum> [maximum]` | Set every stage's delay |
+| `/blocksregenerator chain stage <region> <chain> add <block> [minimum] [maximum]` | Append a stage |
+| `/blocksregenerator chain stage <region> <chain> remove <stage>` | Remove a 1-based stage |
+| `/blocksregenerator chain stage <region> <chain> move <from> <to>` | Reorder stages, keeping timers with them |
+| `/blocksregenerator chain stage <region> <chain> delay <stage> <minimum> [maximum]` | Set one stage's delay |
 
 `direct` restores the initial block in one step. `staged` restores one step at a time using each stage's delay. `same-timer` restores one step at a time using the first stage's delay. Crops and furniture are standalone rules, rather than chain stages.
 
@@ -88,14 +88,14 @@ The GUI exposes chain creation, renaming, stage selection/replacement, move earl
 
 | Command | Purpose |
 | --- | --- |
-| `/br copy <region> [all|blocks|chains]` | Copy definitions to your personal clipboard |
-| `/br paste <region>` | Replace copied block/chain collections with independent copies |
-| `/br import oreregenerator` | Import original plugin data from the adjacent `OreRegenerator` plugin directory |
-| `/br import ultimate-regen` | Import Ultimate_BlockRegeneration definitions |
-| `/br import minexfarm-regen` | Import MineXFarmRegen definitions |
-| `/br reload` | Reload configuration/messages; alias `rl` |
-| `/br eval <expression>` | Evaluate a supported numeric expression |
-| `/br help` | Show command reference |
+| `/blocksregenerator copy <region> [all|blocks|chains]` | Copy definitions to your personal clipboard |
+| `/blocksregenerator paste <region>` | Replace copied block/chain collections with independent copies |
+| `/blocksregenerator import oreregenerator` | Import original plugin data from the adjacent `OreRegenerator` plugin directory |
+| `/blocksregenerator import ultimate-regen` | Import Ultimate_BlockRegeneration definitions |
+| `/blocksregenerator import minexfarm-regen` | Import MineXFarmRegen definitions |
+| `/blocksregenerator reload` | Reload configuration/messages; alias `rl` |
+| `/blocksregenerator eval <expression>` | Evaluate a supported numeric expression |
+| `/blocksregenerator help` | Show command reference |
 
 `convert` aliases `import`. A clipboard copies blocks plus chains by default; selecting only one replaces only that collection when pasted. Clipboards, selection, prompts, and manual mode are cleared on disconnect. GUI deletion, clipboard paste, conflict merge, and bulk timers require an in-game confirmation. Direct commands take effect immediately.
 

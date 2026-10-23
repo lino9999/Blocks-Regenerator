@@ -76,7 +76,7 @@ class AdminControllerTest {
         when(sender.hasPermission("oreregenerator.admin")).thenReturn(true);
         when(backend.region("mine")).thenReturn(Region.create("mine", "world", null));
 
-        controller.onCommand(sender, mock(Command.class), "or", new String[]{"region", "delete", "mine"});
+        controller.onCommand(sender, mock(Command.class), "blocksregenerator", new String[]{"region", "delete", "mine"});
 
         verify(backend).region("mine");
         verify(backend).delete("mine");

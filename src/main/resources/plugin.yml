@@ -42,9 +42,9 @@ softdepend:
   - LandClaimPlugin
 commands:
   blocksregenerator:
-    aliases: [br, or, oreregenerator]
+    aliases: [bregen, br]
     description: Manage regeneration regions
-    usage: /br help
+    usage: /blocksregenerator help
 permissions:
   blocksregenerator.admin:
     default: op
