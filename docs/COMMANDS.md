@@ -1,6 +1,6 @@
 # Administration
 
-Use `/blocksregenerator` to open the inventory editor. Short aliases are `/bregen` and `/br`. The old `/or` and `/oreregenerator` command aliases were removed in 1.0.2. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
+Use `/blocksregenerator` to open the inventory editor. Short aliases are `/bregen` and `/br`. Only BlocksRegenerator command names are registered. Commands require `blocksregenerator.admin`. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
 
 WorldEdit/FAWE may use `/br` for brushes. Use `/blocksregenerator` or `/bregen` to avoid that collision. `/blocksregenerator:blocksregenerator` explicitly selects this plugin's command.
 
@@ -90,7 +90,7 @@ The GUI exposes chain creation, renaming, stage selection/replacement, move earl
 | --- | --- |
 | `/blocksregenerator copy <region> [all|blocks|chains]` | Copy definitions to your personal clipboard |
 | `/blocksregenerator paste <region>` | Replace copied block/chain collections with independent copies |
-| `/blocksregenerator import oreregenerator` | Import original plugin data from the adjacent `OreRegenerator` plugin directory |
+| `/blocksregenerator import legacy` | Import `regions.json` and optional `persistence.json` copied into `plugins/BlocksRegenerator/imports/legacy/` |
 | `/blocksregenerator import ultimate-regen` | Import Ultimate_BlockRegeneration definitions |
 | `/blocksregenerator import minexfarm-regen` | Import MineXFarmRegen definitions |
 | `/blocksregenerator reload` | Reload configuration/messages; alias `rl` |

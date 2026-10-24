@@ -1,0 +1,182 @@
+[CENTER][SIZE=7][B][COLOR=#2AA9B8]BLOCKSREGENERATOR[/COLOR][/B][/SIZE]
+[SIZE=4][B]Block & Crop Regeneration for Spigot and Paper[/B][/SIZE]
+[COLOR=#E6A23C]MINING REGIONS  •  REGEN CHAINS  •  GUI EDITORS[/COLOR]
+
+[URL=https://github.com/lino9999/Blocks-Regenerator/releases/latest][B]DOWNLOAD[/B][/URL]  |  [URL=https://github.com/lino9999/Blocks-Regenerator#readme][B]GUIDE[/B][/URL]  |  [URL=https://github.com/lino9999/Blocks-Regenerator/issues][B]REPORT AN ISSUE[/B][/URL]
+[SIZE=3]Created by Lino • Spigot / Paper 1.21.11–26.3[/SIZE][/CENTER]
+
+[QUOTE][B]BlocksRegenerator[/B] is a Minecraft block regeneration plugin for Spigot and Paper. Build regenerating ore mines, renewable crop farms and staged mining areas with configurable regions, exact or random respawn timers, custom block replacements and inventory editors.[/QUOTE]
+
+[SIZE=5][B][COLOR=#2AA9B8]01  |  MINED BLOCKS COME BACK[/COLOR][/B][/SIZE]
+
+Create a region, choose the blocks that should regenerate and set their delay. Players mine a matching block, its temporary replacement appears, and the captured original returns when the timer finishes.
+
+[CENTER][B]DIAMOND ORE[/B] → mine → [B]STONE[/B] → wait 5–10 seconds → [B]DIAMOND ORE[/B][/CENTER]
+
+Useful for survival resource areas, Skyblock mining zones, prison-style mining areas and renewable farms. Regeneration follows individual mined blocks: build the area first, then choose which materials should return.
+
+[SIZE=5][B][COLOR=#2AA9B8]02  |  FEATURES AT A GLANCE[/COLOR][/B][/SIZE]
+
+[TABLE]
+[TR][TH]Feature[/TH][TH]What you can do[/TH][/TR]
+[TR][TD][B]Local & global regions[/B][/TD][TD]Select an inclusive cuboid or cover a whole world. Use priorities to choose the active region where areas overlap.[/TD][/TR]
+[TR][TD][B]Block & crop regeneration[/B][/TD][TD]Restore captured block data, require exact crop maturity, and handle doors, tall plants, sugar cane, cactus and bamboo.[/TD][/TR]
+[TR][TD][B]Flexible timers[/B][/TD][TD]Choose fixed or random delays. Advanced expressions can also use the online player count.[/TD][/TR]
+[TR][TD][B]Regen chains[/B][/TD][TD]Make mining advance through ordered block stages, then recover directly or step by step. Choose whether the last stage can be mined.[/TD][/TR]
+[TR][TD][B]Inventory editors[/B][/TD][TD]Edit block rules, chains and region settings. Search paged lists, select block items and use private input prompts.[/TD][/TR]
+[TR][TD][B]Mining & building controls[/B][/TD][TD]Configure ordinary breaking, placement, buckets, farmland trampling, automatic inventory drops and land-claim checks per region.[/TD][/TR]
+[TR][TD][B]Custom content[/B][/TD][TD]Optional adapters for ItemsAdder, Oraxen and Nexo blocks and furniture, plus BlockHardness break events.[/TD][/TR]
+[TR][TD][B]Protection integrations[/B][/TD][TD]Direct checks for WorldGuard, GriefPrevention, Towny, Lands and Residence, plus additional adapters through bundled AntiGriefLib.[/TD][/TR]
+[TR][TD][B]Persistence & recovery[/B][/TD][TD]Preserve remaining timers across clean restarts, retain recovery for unloaded chunks and keep a previous saved-state backup.[/TD][/TR]
+[TR][TD][B]Administration tools[/B][/TD][TD]Use the selection wand, manual block registration, personal region outlines, clipboard copies and legacy imports.[/TD][/TR]
+[/TABLE]
+
+[SIZE=5][B][COLOR=#2AA9B8]03  |  YOUR FIRST REGENERATING MINE[/COLOR][/B][/SIZE]
+
+[LIST=1]
+[*]Stop the server, place the current BlocksRegenerator JAR in [ICODE]plugins/[/ICODE], and remove older copies or conflicting regeneration plugins.
+[*]Start the server with the Java version listed below.
+[*]As an operator, run [ICODE]/blocksregenerator wand[/ICODE].
+[*]Left-click one corner and right-click the opposite corner of your mining area.
+[*]Run these commands:
+[/LIST]
+[CODE]/blocksregenerator create mine
+/blocksregenerator block add mine DIAMOND_ORE STONE 5 10
+/blocksregenerator block add mine IRON_ORE STONE 3
+/blocksregenerator setting set mine auto-inventory true
+/blocksregenerator edit mine[/CODE]
+
+Place ore inside the selected area before testing. Diamond ore returns after a random 5–10 seconds; iron ore returns after exactly 3 seconds. Automatic inventory collection sends drops to the player and drops any overflow into the world.
+
+[B]Default local protection:[/B] unconfigured block breaking and block placement are disabled. Use region settings to allow other building activity.
+
+[SIZE=5][B][COLOR=#2AA9B8]04  |  MORE THAN ORE REGENERATION[/COLOR][/B][/SIZE]
+
+[SPOILER=Mature crop farm]
+Select a separate farm area with the wand, then:
+[CODE]/blocksregenerator create farm
+/blocksregenerator block add farm crop:WHEAT_SEEDS@7 AIR 10
+/blocksregenerator setting set farm allow-block-trampling false[/CODE]
+Only wheat at age 7 matches this rule. After harvesting, its captured mature state returns after ten seconds. Omit the age suffix to match any age.
+[/SPOILER]
+
+[SPOILER=Three-stage regeneration chain]
+Select a separate mining area with the wand, then:
+[CODE]/blocksregenerator create chain_mine
+/blocksregenerator chain add chain_mine ore_cycle
+/blocksregenerator chain stage chain_mine ore_cycle add DIAMOND_ORE 10
+/blocksregenerator chain stage chain_mine ore_cycle add GOLD_ORE 5
+/blocksregenerator chain stage chain_mine ore_cycle add STONE 3
+/blocksregenerator chain style chain_mine ore_cycle staged
+/blocksregenerator chain final chain_mine ore_cycle false[/CODE]
+Mining diamond ore advances to gold ore, then stone. Stone is unbreakable with this setting, and recovery moves back through the stages. Choose [ICODE]direct[/ICODE] for recovery to the first stage or [ICODE]same-timer[/ICODE] to use the first stage's delay for every recovery step.
+
+Avoid a standalone rule with the same entry material in this region. Use the GUI's conflict tools where appropriate.
+[/SPOILER]
+
+[SPOILER=Whole-world regeneration]
+[CODE]/blocksregenerator global world world_mines
+/blocksregenerator block add world_mines DIAMOND_ORE STONE 10[/CODE]
+Replace [ICODE]world[/ICODE] with a loaded world's name. A global region starts with ordinary breaking and placement enabled. Higher-priority local regions can override it.
+[/SPOILER]
+
+[SIZE=5][B][COLOR=#2AA9B8]05  |  COMMANDS & PERMISSIONS[/COLOR][/B][/SIZE]
+
+Open the editor with [ICODE]/blocksregenerator[/ICODE]. The shorter [ICODE]/bregen[/ICODE] runs the same commands. The optional [ICODE]/br[/ICODE] alias can conflict with WorldEdit/FAWE brushes; use the main command or [ICODE]/bregen[/ICODE] on those servers.
+
+[TABLE]
+[TR][TH]Permission[/TH][TH]Default[/TH][TH]Purpose[/TH][/TR]
+[TR][TD][ICODE]blocksregenerator.admin[/ICODE][/TD][TD]Operators[/TD][TD]Use administration commands, menus and selection tools.[/TD][/TR]
+[TR][TD][ICODE]blocksregenerator.bypass.claims[/ICODE][/TD][TD]false[/TD][TD]Bypass land-claim checks performed by BlocksRegenerator.[/TD][/TR]
+[/TABLE]
+
+Players need no additional BlocksRegenerator permission to mine configured blocks. Region settings and other protection plugins still apply. The claim-bypass permission does not bypass every region restriction.
+
+[SPOILER=Complete command reference]
+[B]Short form:[/B] every [ICODE]/bregen[/ICODE] command below also works with [ICODE]/blocksregenerator[/ICODE].
+[ICODE]<value>[/ICODE] is required; square-bracketed arguments are optional. Delay arguments use whole seconds.
+
+[B][COLOR=#2AA9B8]Selection and regions[/COLOR][/B]
+[TABLE]
+[TR][TH]Command[/TH][TH]What it does[/TH][/TR]
+[TR][TD][ICODE]/bregen wand[/ICODE][/TD][TD]Get the selection stick; left/right click sets corners one/two[/TD][/TR]
+[TR][TD][ICODE]/bregen pos1[/ICODE], [ICODE]/bregen pos2[/ICODE][/TD][TD]Select the block at your current position[/TD][/TR]
+[TR][TD][ICODE]/bregen position one[/ICODE], [ICODE]/bregen position two[/ICODE][/TD][TD]Long forms; [ICODE]position[/ICODE] also accepts [ICODE]pos[/ICODE], [ICODE]1[/ICODE], [ICODE]2[/ICODE][/TD][/TR]
+[TR][TD][ICODE]/bregen create <region>[/ICODE][/TD][TD]Create an inclusive cuboid from both selected corners[/TD][/TR]
+[TR][TD][ICODE]/bregen select <region>[/ICODE][/TD][TD]Copy an existing cuboid into your current selection[/TD][/TR]
+[TR][TD][ICODE]/bregen global <world> [region][/ICODE][/TD][TD]Create one global region for a loaded world[/TD][/TR]
+[TR][TD][ICODE]/bregen list[/ICODE][/TD][TD]List region IDs[/TD][/TR]
+[TR][TD][ICODE]/bregen edit <region>[/ICODE][/TD][TD]Open the region editor[/TD][/TR]
+[TR][TD][ICODE]/bregen delete <region>[/ICODE][/TD][TD]Delete a region and restore its active blocks[/TD][/TR]
+[TR][TD][ICODE]/bregen priority <region> <integer>[/ICODE][/TD][TD]Set overlap precedence; larger values win[/TD][/TR]
+[TR][TD][ICODE]/bregen regenerate <region>[/ICODE][/TD][TD]Restore active blocks immediately; aliases [ICODE]restore[/ICODE], [ICODE]regen[/ICODE][/TD][/TR]
+[TR][TD][ICODE]/bregen add[/ICODE][/TD][TD]Add a block type by left-clicking a world block; sneak + right-click exits[/TD][/TR]
+[TR][TD][ICODE]/bregen edges[/ICODE][/TD][TD]Toggle personal region boundaries; aliases [ICODE]borders[/ICODE], [ICODE]visualize[/ICODE][/TD][/TR]
+[/TABLE]
+
+[B][COLOR=#2AA9B8]Blocks[/COLOR][/B]
+[TABLE]
+[TR][TH]Command[/TH][TH]What it does[/TH][/TR]
+[TR][TD][ICODE]/bregen block add <region> <original> <replacement> <minimum> [maximum][/ICODE][/TD][TD]Add a rule with seconds of delay[/TD][/TR]
+[TR][TD][ICODE]/bregen block remove <region> <block>[/ICODE][/TD][TD]Remove a rule; [ICODE]delete[/ICODE] also works[/TD][/TR]
+[TR][TD][ICODE]/bregen block delay <region> <block> <minimum> [maximum][/ICODE][/TD][TD]Change its timer[/TD][/TR]
+[TR][TD][ICODE]/bregen block replace <region> <block> <replacement>[/ICODE][/TD][TD]Change its temporary block[/TD][/TR]
+[TR][TD][ICODE]/bregen block age <region> <block> <-1|age>[/ICODE][/TD][TD]Change an existing crop rule's exact required age[/TD][/TR]
+[/TABLE]
+
+[B][COLOR=#2AA9B8]Regen chains[/COLOR][/B]
+[TABLE]
+[TR][TH]Command[/TH][TH]What it does[/TH][/TR]
+[TR][TD][ICODE]/bregen chain add <region> <name>[/ICODE][/TD][TD]Create an empty chain[/TD][/TR]
+[TR][TD][ICODE]/bregen chain remove <region> <chain>[/ICODE][/TD][TD]Remove a chain[/TD][/TR]
+[TR][TD][ICODE]/bregen chain rename <region> <chain> <name>[/ICODE][/TD][TD]Change its name[/TD][/TR]
+[TR][TD][ICODE]/bregen chain style <region> <chain> <direct|staged|same-timer>[/ICODE][/TD][TD]Choose regeneration style[/TD][/TR]
+[TR][TD][ICODE]/bregen chain final <region> <chain> <true|false>[/ICODE][/TD][TD]Allow or deny mining its final stage[/TD][/TR]
+[TR][TD][ICODE]/bregen chain delay <region> <chain> <minimum> [maximum][/ICODE][/TD][TD]Set every stage's delay[/TD][/TR]
+[TR][TD][ICODE]/bregen chain stage <region> <chain> add <block> [minimum] [maximum][/ICODE][/TD][TD]Append a stage[/TD][/TR]
+[TR][TD][ICODE]/bregen chain stage <region> <chain> remove <stage>[/ICODE][/TD][TD]Remove a 1-based stage[/TD][/TR]
+[TR][TD][ICODE]/bregen chain stage <region> <chain> move <from> <to>[/ICODE][/TD][TD]Reorder stages, keeping timers with them[/TD][/TR]
+[TR][TD][ICODE]/bregen chain stage <region> <chain> delay <stage> <minimum> [maximum][/ICODE][/TD][TD]Set one stage's delay[/TD][/TR]
+[/TABLE]
+
+[B][COLOR=#2AA9B8]Clipboard, imports, and maintenance[/COLOR][/B]
+[TABLE]
+[TR][TH]Command[/TH][TH]What it does[/TH][/TR]
+[TR][TD][ICODE]/bregen copy <region> [all|blocks|chains][/ICODE][/TD][TD]Copy definitions to your personal clipboard[/TD][/TR]
+[TR][TD][ICODE]/bregen paste <region>[/ICODE][/TD][TD]Replace copied block/chain collections with independent copies[/TD][/TR]
+[TR][TD][ICODE]/bregen import legacy[/ICODE][/TD][TD]Import [ICODE]regions.json[/ICODE] and optional [ICODE]persistence.json[/ICODE] copied into [ICODE]plugins/BlocksRegenerator/imports/legacy/[/ICODE][/TD][/TR]
+[TR][TD][ICODE]/bregen import ultimate-regen[/ICODE][/TD][TD]Import Ultimate_BlockRegeneration definitions[/TD][/TR]
+[TR][TD][ICODE]/bregen import minexfarm-regen[/ICODE][/TD][TD]Import MineXFarmRegen definitions[/TD][/TR]
+[TR][TD][ICODE]/bregen reload[/ICODE][/TD][TD]Reload configuration/messages; alias [ICODE]rl[/ICODE][/TD][/TR]
+[TR][TD][ICODE]/bregen eval <expression>[/ICODE][/TD][TD]Evaluate a supported numeric expression[/TD][/TR]
+[TR][TD][ICODE]/bregen help[/ICODE][/TD][TD]Show command reference[/TD][/TR]
+[/TABLE]
+
+Use [ICODE]/bregen setting get <region> <setting>[/ICODE] or [ICODE]/bregen setting set <region> <setting> <value>[/ICODE] for per-region options. See the Documentation tab for every setting, selector, alias and import workflow.
+[/SPOILER]
+
+[SIZE=5][B][COLOR=#2AA9B8]06  |  COMPATIBILITY & INTEGRATIONS[/COLOR][/B][/SIZE]
+
+[TABLE]
+[TR][TH]Server version[/TH][TH]Java[/TH][/TR]
+[TR][TD]Spigot / Paper 1.21.11[/TD][TD]Java 21 or newer supported by your server[/TD][/TR]
+[TR][TD]Spigot / Paper 26.1, 26.1.1, 26.1.2, 26.2, 26.3[/TD][TD]Java 25[/TD][/TR]
+[/TABLE]
+
+One JAR covers this version range. Vanilla regeneration requires no additional plugin. Custom content and land protection require compatible releases of their respective providers. Provider adapters are version-dependent; check the Documentation tab before deploying custom blocks or furniture.
+
+[SIZE=5][B][COLOR=#2AA9B8]07  |  BUILT FOR ONGOING SERVER USE[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]Regeneration work is limited by a configurable per-tick budget.
+[*]Timers do not force unloaded chunks to load.
+[*]Successful administrative edits are saved before confirmation.
+[*]Pending blocks restore before region configuration changes.
+[*]Invalid saved state is preserved for recovery rather than silently overwritten.
+[*]Configuration and messages are editable in [ICODE]plugins/BlocksRegenerator/[/ICODE].
+[/LIST]
+
+[B]Good to know:[/B] remaining time pauses across clean server shutdowns. Crash recovery uses periodic checkpoints. A manual regeneration command restores pending blocks; it does not refill an entire mine.
+
+[CENTER][SIZE=4][B][COLOR=#2AA9B8]CREATE A REGION. SET A TIMER. KEEP RESOURCES RETURNING.[/COLOR][/B][/SIZE]
+[URL=https://github.com/lino9999/Blocks-Regenerator/releases/latest]Get BlocksRegenerator[/URL]  •  [URL=https://github.com/lino9999/Blocks-Regenerator#readme]Read the guide[/URL]  •  [URL=https://github.com/lino9999/Blocks-Regenerator/issues]Get support[/URL][/CENTER]

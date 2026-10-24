@@ -1,6 +1,6 @@
 # Reverse engineering evidence
 
-The target is the user-supplied OreRegenerator-2.6.2.jar. Its SHA-256 is `c4590429b2a6f5a54253822d758de31e949949a3eb160504d69ea94ccccd84cf`.
+The target is the user-supplied legacy regeneration JAR (version 2.6.2). Its SHA-256 is `c4590429b2a6f5a54253822d758de31e949949a3eb160504d69ea94ccccd84cf`.
 
 REA 6.7.0 was installed with `npx --yes rea-agents@latest setup --client codex --yes --json`, following a dry-run review. The Codex registration and matching workflow installation passed setup's scoped readiness check. Setup modified the user-level Codex configuration with a backup; no personal configuration belongs in this repository. The running coding session did not hot-load the new MCP server, so the REA CLI supplied artifact evidence. Restart Codex to load the registration.
 

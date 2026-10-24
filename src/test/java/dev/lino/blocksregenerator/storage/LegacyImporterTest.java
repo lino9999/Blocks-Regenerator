@@ -34,7 +34,7 @@ class LegacyImporterTest {
                 {"blocks":[{"type":"standard","region":"mine","regennableBlock":"%s",
                 "location":{"world":"world","x":0,"y":12,"z":0},"originalBlockData":"minecraft:diamond_ore","regenTime":1234}]}
                 """.formatted(rule));
-        SavedState state = importer.oreRegenerator(directory, 10000);
+        SavedState state = importer.legacyJson(directory, 10000);
         Region region = state.regions().getFirst();
         assertEquals(-2, region.bounds().minX());
         assertFalse(region.setting(RegionSetting.ALLOW_BLOCK_TRAMPLING));
@@ -52,7 +52,7 @@ class LegacyImporterTest {
                 "originalPlaceable":{"type":"itemsadder-furniture","data":{"furniture-id":"example:chair"}},
                 "replacePlaceable":{"type":"material","data":{"material":"AIR"}},"minRegenTime":5,"maxRegenTime":5}},"chains":{}}}}
                 """.formatted(rule, rule));
-        Region region = importer.oreRegenerator(directory, 0).regions().getFirst();
+        Region region = importer.legacyJson(directory, 0).regions().getFirst();
         assertTrue(region.global());
         assertEquals("missing_world", region.world());
         assertEquals(new Placeable("itemsadder-furniture", "example:chair"), region.rules().getFirst().original());
@@ -68,7 +68,7 @@ class LegacyImporterTest {
                 "chains":{"%s":{"uuid":"%s","name":"ore","steppedRegen":true,"uniformDelay":true,
                 "stages":{"1":%s,"0":%s}}}}}}
                 """.formatted(chain, chain, second, first));
-        RegenChain imported = importer.oreRegenerator(directory, 0).regions().getFirst().chains().getFirst();
+        RegenChain imported = importer.legacyJson(directory, 0).regions().getFirst().chains().getFirst();
         assertEquals(RegenChain.Style.STAGED_SAME_TIMER, imported.style());
         assertEquals("DIAMOND_ORE", imported.stages().getFirst().original().id());
         assertEquals("STONE", imported.stages().getLast().original().id());
@@ -78,7 +78,7 @@ class LegacyImporterTest {
     void rejectsMalformedTimerInsteadOfSilentlyDroppingIt() throws Exception {
         Files.writeString(directory.resolve("regions.json"), "{\"version\":2,\"regions\":{}}");
         Files.writeString(directory.resolve("persistence.json"), "{\"blocks\":[{\"region\":\"missing\"}]}");
-        assertThrows(IllegalArgumentException.class, () -> importer.oreRegenerator(directory, 0));
+        assertThrows(IllegalArgumentException.class, () -> importer.legacyJson(directory, 0));
         assertTrue(Files.exists(directory.resolve("persistence.json")));
     }
 

@@ -1,6 +1,6 @@
 # Integration contracts recovered from the original artifact
 
-Evidence is static inspection of the shipped plugin, not a running server. Original evidence paths below are relative to `.work/original/dev/mrshawn/oreregenerator/`; `.work/readable/` contains the same methods with decompiler metadata removed. These files describe behavior, not reusable implementation source.
+Evidence is static inspection of the shipped plugin, not a running server. Original evidence paths below are relative to `.work/original/`; `.work/readable/` contains the same methods with decompiler metadata removed. These files describe behavior, not reusable implementation source.
 
 ## Custom content providers
 
@@ -48,7 +48,7 @@ Evidence: `hooks/CustomBlockHook.processCustomBlockBreakEvent`, `.processCustomF
 
 ## Claims and region permission resolution
 
-Original config defaults: `hooks.anti-grief.enabled: true`, `hooks.anti-grief.ignore-op: true`, `hooks.anti-grief.bypass-permission: oreregenerator.bypass.claims`. Integration loads one tick after enable. The artifact shades `dev.mrshawn.shade.antigrieflib.AntiGriefLib`; this is a relocated bundled dependency, not a class supplied by another server plugin. It builds with `ignoreOP`, `bypassPermission`, `silentLogs(true)`, `suppressErrors(true)` and calls `test(player, Flag.BREAK/PLACE/INTERACT, location)`. Initialization or query failures allow the action in the original.
+Original config defaults enable `hooks.anti-grief.enabled` and `hooks.anti-grief.ignore-op`, with a legacy claim-bypass permission whose product-specific identifier is omitted here. Integration loads one tick after enable. The artifact shades `dev.mrshawn.shade.antigrieflib.AntiGriefLib`; this is a relocated bundled dependency, not a class supplied by another server plugin. It builds with `ignoreOP`, `bypassPermission`, `silentLogs(true)`, `suppressErrors(true)` and calls `test(player, Flag.BREAK/PLACE/INTERACT, location)`. Initialization or query failures allow the action in the original.
 
 With region `respect-claims` true, claim denial wins first. Next, a true region action setting allows the action. A false action setting is overridden only for a global region when a granting claim contains the location. Otherwise the region denies. Explicit cuboid regions cannot receive this granting override. Claims do not disable regeneration for permitted mining.
 

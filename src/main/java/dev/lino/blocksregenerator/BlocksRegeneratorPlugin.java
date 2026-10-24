@@ -60,8 +60,8 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
     @Override
     public void onEnable() {
         try {
-            if (getServer().getPluginManager().isPluginEnabled("OreRegenerator")) {
-                throw new IllegalStateException("Remove the original OreRegenerator JAR before enabling BlocksRegenerator");
+            if (getServer().getPluginManager().getPlugin("OreRegenerator") != null) {
+                throw new IllegalStateException("Remove the conflicting legacy regeneration plugin JAR before enabling BlocksRegenerator");
             }
             saveDefaultConfig();
             validateConfiguration();
@@ -254,10 +254,10 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
         SavedState imported;
         try {
             imported = switch (normalized) {
-                case "oreregenerator", "ore-regenerator" -> importer.oreRegenerator(plugins.resolve("OreRegenerator"), clock.millis());
+                case "legacy" -> importer.legacyJson(getDataFolder().toPath().resolve("imports/legacy"), clock.millis());
                 case "ultimate-regen", "ultimateregen" -> new SavedState(importer.foreignYaml(plugins.resolve("Ultimate_BlockRegeneration"), true), List.of());
                 case "minexfarm-regen", "minexfarmregen" -> new SavedState(importer.foreignYaml(plugins.resolve("MineXFarmRegen"), false), List.of());
-                default -> throw new IllegalArgumentException("Source must be oreregenerator, ultimate-regen or minexfarm-regen");
+                default -> throw new IllegalArgumentException("Source must be legacy, ultimate-regen or minexfarm-regen");
             };
         } catch (IOException error) {
             throw new IllegalArgumentException("Cannot import source: " + error.getMessage(), error);

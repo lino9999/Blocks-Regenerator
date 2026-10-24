@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class LegacyImporter {
-    public SavedState oreRegenerator(Path directory, long now) throws IOException {
+    public SavedState legacyJson(Path directory, long now) throws IOException {
         Path file = directory.resolve("regions.json");
         JsonObject root = json(file);
         JsonObject entries = root.has("regions") ? root.getAsJsonObject("regions") : root;

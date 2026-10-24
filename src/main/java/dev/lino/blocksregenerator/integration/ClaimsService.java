@@ -166,7 +166,7 @@ public final class ClaimsService {
 
     private boolean bypass(Player player) {
         if (plugin.getConfig().getBoolean("hooks.anti-grief.ignore-op", true) && player.isOp()) return true;
-        String permission = plugin.getConfig().getString("hooks.anti-grief.bypass-permission", "oreregenerator.bypass.claims");
+        String permission = plugin.getConfig().getString("hooks.anti-grief.bypass-permission", "blocksregenerator.bypass.claims");
         return permission != null && !permission.isBlank() && player.hasPermission(permission);
     }
 

@@ -1,17 +1,17 @@
 # Original plugin contract: administration and storage
 
-This is a static analysis of the supplied OreRegenerator artifact, decompiled with CFR. It records observed method bodies and data keys; it is not a claim that any feature has been exercised on a server. Evidence paths below are relative to `dev.mrshawn.oreregenerator` in the original artifact. Core regeneration and external hook behavior are analyzed separately.
+This is a static analysis of the supplied legacy plugin artifact, decompiled with CFR. It records observed method bodies and data keys; it is not a claim that any feature has been exercised on a server. Evidence paths below are relative to the legacy artifact package in the original artifact. Product-specific command roots and permission identifiers are described generically. Core regeneration and external hook behavior are analyzed separately.
 
 ## Regions and selection
 
 - Local regions are inclusive cuboids in one world. Containment uses block coordinates, inclusive minimum and maximum X/Y/Z, and the recorded world name. Evidence: `regions.RegenRegion.contains`.
 - Global regions cover their entire world; their ID is the world name. Local priority is 1, global priority is 0. Lookup selects a containing region with greatest priority. Same-priority overlaps have no explicit ordering because the backing collection is a `HashMap`; the menu warns about overlap. Evidence: `regions.GlobalRegenRegion`, `regions.RegionManager.getRegion(Location)`, `menus.regions.RegionEditorMenu.createGui`.
-- `/or wand` supplies a named stick. Left-click selects corner 1; right-click selects corner 2. `/or position|pos one|1` and `two|2` select the player's current location. Saving requires both corners and a unique ID. Evidence: `wands.RegionSelectorWand`, `commands.OreRegeneratorCMD.PositionCommand`, `RegionCommand.onSave`.
+- The legacy `wand` command supplies a named stick. Left-click selects corner 1; right-click selects corner 2. The `position|pos one|1` and `two|2` subcommands select the player's current location. Saving requires both corners and a unique ID. Evidence: `wands.RegionSelectorWand`, the legacy position command implementation, `RegionCommand.onSave`.
 - Normal local creation reconciles settings defaults, registers the region, then saves it. Global creation is also exposed as a command. Auto-generated globals are optional. `GlobalRegenRegion.Companion.create` explicitly enables block break, block place, and farmland trampling; the global creation command instead directly constructs a global with ordinary defaults. This inconsistency is an observed defect, not a recommended requirement. Evidence: `regions.RegionManager.createRegion`, `regions.GlobalRegenRegion.Companion.create`, `RegionCommand.GlobalCommand.onGlobalCreate`, `files.RegionFile.loadRegions`.
 
 ## Commands
 
-All commands are under `/or` or `/oreregenerator` and inherit `oreregenerator.admin`. Player-only methods use the Bukkit `Player` argument. Evidence: `commands.OreRegeneratorCMD` annotations and nested command classes.
+All commands share the legacy root command and administration permission. Player-only methods use the Bukkit `Player` argument. Evidence: annotations and nested classes in the legacy command implementation. The table records subcommands without their product-specific root.
 
 | Command suffix | Sender | Observed behavior |
 | --- | --- | --- |
@@ -71,7 +71,7 @@ Evidence: `files.Config.CValues`.
 | `advanced.converters.minexfarm-regen.remove-data` | false |
 | `hooks.anti-grief.enabled` | true |
 | `hooks.anti-grief.ignore-op` | true |
-| `hooks.anti-grief.bypass-permission` | `oreregenerator.bypass.claims` |
+| `hooks.anti-grief.bypass-permission` | `legacy claim-bypass permission` |
 | `advanced.stacked-blocks.fire-break-events` | true |
 
 `messages.yml` exposes `cant-break-block`, `cant-place-block`, `cant-use-bucket`, and `regen-time-remaining`. Defaults are English with legacy color codes. A trailing `<delay:N>` is stripped from displayed text and supplies a per-message delay. Default delays are 5000, 1000, 1000, and 1000 respectively. Remaining-time replacements include `%dd%`, `%hh%`, `%mm%`, `%ss%`, `%ms%`. Right-clicking an active block reports its remaining time. Evidence: `files.Messages`, `events.listeners.PlayerInteractListener.handleGetRegenTime`, `extensions.ChatExtensionsKt`.

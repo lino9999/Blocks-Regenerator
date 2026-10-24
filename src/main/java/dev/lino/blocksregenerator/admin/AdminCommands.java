@@ -106,7 +106,7 @@ final class AdminCommands {
                 sender.sendMessage("Result: " + backend.evaluate(String.join(" ", Arrays.copyOfRange(args, 1, args.length))));
             }
             case "import", "convert" -> {
-                require(args, 2, "import <oreregenerator|ultimate-regen|minexfarm-regen>");
+                require(args, 2, "import <legacy|ultimate-regen|minexfarm-regen>");
                 backend.importData(args[1]);
                 sender.sendMessage("Import completed.");
             }
@@ -491,7 +491,7 @@ final class AdminCommands {
                 "/blocksregenerator chain add|remove|rename|style|final|stage|delay <region> <chain> [values]",
                 "/blocksregenerator copy <region> [all|blocks|chains] | paste <region>",
                 "/blocksregenerator priority <region> <number> | reload | eval <expression>",
-                "/blocksregenerator import <oreregenerator|ultimate-regen|minexfarm-regen>",
+                "/blocksregenerator import <legacy|ultimate-regen|minexfarm-regen>",
                 "Custom blocks: type:id. Crop age: crop:WHEAT_SEEDS@7. See docs/COMMANDS.md."});
     }
 }
