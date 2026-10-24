@@ -70,16 +70,30 @@ class AdminControllerTest {
     }
 
     @Test
-    void compatibilityPermissionAllowsValidatedDeletion() {
+    void adminPermissionAllowsValidatedDeletion() {
         AdminController controller = new AdminController(backend);
         CommandSender sender = mock(CommandSender.class);
-        when(sender.hasPermission("oreregenerator.admin")).thenReturn(true);
+        when(sender.hasPermission("blocksregenerator.admin")).thenReturn(true);
         when(backend.region("mine")).thenReturn(Region.create("mine", "world", null));
 
         controller.onCommand(sender, mock(Command.class), "blocksregenerator", new String[]{"region", "delete", "mine"});
 
         verify(backend).region("mine");
         verify(backend).delete("mine");
+    }
+
+    @Test
+    void unrelatedPermissionsDoNotGrantAdministration() {
+        AdminController controller = new AdminController(backend);
+        CommandSender sender = mock(CommandSender.class);
+        when(sender.hasPermission(anyString())).thenAnswer(invocation ->
+                !AdminSessions.PERMISSION.equals(invocation.getArgument(0)));
+
+        controller.onCommand(sender, mock(Command.class), "blocksregenerator", new String[]{"delete", "mine"});
+
+        verify(backend, never()).region(anyString());
+        verify(backend, never()).delete(anyString());
+        assertEquals(0, controller.onTabComplete(sender, mock(Command.class), "blocksregenerator", new String[]{""}).size());
     }
 
     @Test

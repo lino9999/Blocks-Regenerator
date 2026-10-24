@@ -1,8 +1,18 @@
 # Verification
 
+## Version 1.0.3 naming and publication verification
+
+Verified on 24 October 2026. The Java 21 baseline build passes 73 tests with zero failures or errors. Only `blocksregenerator.admin` and `blocksregenerator.bypass.claims` are declared. Administration and GUI checks use the canonical permission, and the default claim-bypass permission uses the same namespace. Regression tests verify that unrelated permissions cannot grant command access and that the canonical bypass works without an explicit configuration override.
+
+An isolated Paper 1.21.11 build 130 on Java 21 passed 16 live checks covering enabled version, command ownership, aliases, removed legacy registrations, canonical permission declarations, import completions, console command dispatch and JSON migration. `/blocksregenerator import legacy` successfully read a fixture from `plugins/BlocksRegenerator/imports/legacy/`; source files were preserved, and the imported test region was deleted after verification. Startup and import log messages use the current naming. Conflict detection for the legacy plugin is retained internally, with a generic user-facing error message and without a product-specific soft dependency in metadata.
+
+The current README and files under docs contain no retired product-name identifiers. The SpigotMC overview and documentation use supported BBCode tags with balanced nesting, complete command tables, explicit compatibility limits and only the two current permission nodes. The short description is 82 characters. The reconstruction record retains the source artifact's version, hash and analysis method under a generic description.
+
+Artifact: `target/BlocksRegenerator-1.0.3.jar`. SHA-256: `8e94137d45bc194ccfad98cef7831c14906baad4e2f3ecd13f0663236949de3d`. Local evidence: `.work/branding-build.log`, `.work/branding-paper.log` and the temporary branding probe. Compatibility and real-provider verification limits below remain applicable.
+
 ## Version 1.0.2 command verification
 
-Verified on 24 October 2026. The Java 21 baseline build passes 71 tests with zero failures or errors. The primary command is `/blocksregenerator`, with `/bregen` and `/br` aliases. The old `/or` and `/oreregenerator` command aliases are removed. Help, wand instructions and the user guides now consistently use the primary command. Existing permission nodes and importer source identifiers remain compatible.
+Verified on 24 October 2026. The Java 21 baseline build passes 71 tests with zero failures or errors. The primary command is `/blocksregenerator`, with `/bregen` and `/br` aliases. Legacy command aliases are removed. Help, wand instructions and the user guides now consistently use the primary command. Existing permission nodes and importer source identifiers remain compatible.
 
 An isolated Paper 1.21.11 build 130 on Java 21 passed 11 live checks: enabled plugin/version, primary ownership, both short aliases, namespaced primary command, absence of both legacy aliases and the old namespaced alias, and console dispatch through the primary command and `/bregen`. The console returned the expected expression result, 5.0.
 

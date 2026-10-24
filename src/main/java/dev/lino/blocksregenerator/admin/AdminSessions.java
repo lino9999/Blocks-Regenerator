@@ -33,7 +33,7 @@ final class AdminSessions {
     }
 
     static boolean allowed(Player player) {
-        return player.hasPermission(PERMISSION) || player.hasPermission("oreregenerator.admin");
+        return player.hasPermission(PERMISSION);
     }
 
     Selection selection(Player player) {

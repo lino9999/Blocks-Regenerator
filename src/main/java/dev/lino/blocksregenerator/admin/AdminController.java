@@ -95,7 +95,7 @@ public final class AdminController implements CommandExecutor, TabCompleter, Lis
             } else if (root.equals("global") && length == 2) {
                 suggestions.addAll(Bukkit.getWorlds().stream().map(w -> w.getName()).toList());
             } else if (root.equals("import") || root.equals("convert")) {
-                suggestions.addAll(List.of("oreregenerator", "ultimate-regen", "minexfarm-regen"));
+                suggestions.addAll(List.of("legacy", "ultimate-regen", "minexfarm-regen"));
             } else if (root.equals("copy") && length == 3) {
                 suggestions.addAll(List.of("all", "blocks", "chains"));
             } else if (List.of("block", "setting", "chain").contains(root)) {
@@ -257,7 +257,7 @@ public final class AdminController implements CommandExecutor, TabCompleter, Lis
     }
 
     private static boolean allowed(CommandSender sender) {
-        return sender.hasPermission(AdminSessions.PERMISSION) || sender.hasPermission("oreregenerator.admin");
+        return sender.hasPermission(AdminSessions.PERMISSION);
     }
 
     private List<String> regionIds() {

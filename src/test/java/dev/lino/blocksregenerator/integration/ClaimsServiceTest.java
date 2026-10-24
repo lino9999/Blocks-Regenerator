@@ -58,4 +58,15 @@ class ClaimsServiceTest {
         when(player.hasPermission("blocksregenerator.bypass.claims")).thenReturn(true);
         assertTrue(service.allowed(player, mock(Location.class), ClaimsService.Action.PLACE));
     }
+
+    @Test
+    void defaultBypassPermissionUsesThePluginNamespace() {
+        Plugin dependency = mock(Plugin.class);
+        when(dependency.isEnabled()).thenReturn(true);
+        when(manager.getPlugin("WorldGuard")).thenReturn(dependency);
+        when(player.hasPermission("blocksregenerator.bypass.claims")).thenReturn(true);
+
+        assertTrue(service.allowed(player, mock(Location.class), ClaimsService.Action.BREAK));
+        verify(player).hasPermission("blocksregenerator.bypass.claims");
+    }
 }

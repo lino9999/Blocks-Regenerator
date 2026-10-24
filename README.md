@@ -33,14 +33,14 @@ Overlapping regions use the highest priority; equal priorities use the region ID
 ## Installation and upgrades
 
 1. Stop the server and back up its worlds and plugin data.
-2. Download `BlocksRegenerator-1.0.2.jar` from [Releases](https://github.com/lino9999/Blocks-Regenerator/releases/latest) and place it in `plugins/`.
-3. Remove older BlocksRegenerator JARs and the original OreRegenerator JAR from `plugins/`. Keep their data folders for migration or recovery.
+2. Download `BlocksRegenerator-1.0.3.jar` from [Releases](https://github.com/lino9999/Blocks-Regenerator/releases/latest) and place it in `plugins/`.
+3. Remove older BlocksRegenerator JARs and conflicting regeneration plugin JARs from `plugins/`. Keep their data folders for migration or recovery.
 4. Start the server using the Java version in the compatibility table.
-5. Check the console for `Enabling BlocksRegenerator v1.0.2`, then run `/blocksregenerator` as an operator or an administrator with the permission below.
+5. Check the console for `Enabling BlocksRegenerator v1.0.3`, then run `/blocksregenerator` as an operator or an administrator with the permission below.
 
-Configuration and saved state are created in `plugins/BlocksRegenerator/`. Upgrading from BlocksRegenerator 1.0.0 preserves the existing data format; keep the data folder and replace the JAR while the server is stopped. Version 1.0.0 required server API 26.3; use 1.0.2 for the wider compatibility range.
+Configuration and saved state are created in `plugins/BlocksRegenerator/`. Upgrading from BlocksRegenerator 1.0.0 preserves the existing data format; keep the data folder and replace the JAR while the server is stopped. Version 1.0.0 required server API 26.3; use 1.0.3 for the wider compatibility range.
 
-Version 1.0.2 removes `/or` and `/oreregenerator`; use `/blocksregenerator` or `/bregen`. Restart the server after replacing the JAR so Bukkit registers the new commands. `/blocksregenerator reload` reloads configuration and messages, and does not apply a new JAR.
+Use `/blocksregenerator` or `/bregen` for administration. Restart the server after replacing the JAR so Bukkit registers the new commands. `/blocksregenerator reload` reloads configuration and messages, and does not apply a new JAR.
 
 ## Quick start: a regenerating mine
 
@@ -80,9 +80,7 @@ Replace `world` with a loaded world's actual name. A global region starts with o
 | Permission | Default | Purpose |
 | --- | --- | --- |
 | `blocksregenerator.admin` | Operators | Use all administration commands, tools and menus |
-| `oreregenerator.admin` | false | Compatibility node that grants `blocksregenerator.admin` |
 | `blocksregenerator.bypass.claims` | false | Bypass this plugin's land-claim checks |
-| `oreregenerator.bypass.claims` | false | Compatibility node that grants `blocksregenerator.bypass.claims` |
 
 Ordinary players need no BlocksRegenerator permission to mine configured blocks. Region settings, other plugins' protection and claim permissions still apply. There are no separate per-command or per-region permission nodes.
 
@@ -96,9 +94,9 @@ The claim bypass permission affects this plugin's checks. It does not grant buil
 
 ## Commands and menus
 
-The primary command is `/blocksregenerator`, with `/bregen` and `/br` as short aliases. WorldEdit/FAWE may claim `/br` for brushes; use `/blocksregenerator` or `/bregen` on those servers. The fully qualified `/blocksregenerator:blocksregenerator` command explicitly selects this plugin. The old `/or` and `/oreregenerator` command aliases were removed in 1.0.2.
+The primary command is `/blocksregenerator`, with `/bregen` and `/br` as short aliases. WorldEdit/FAWE may claim `/br` for brushes; use `/blocksregenerator` or `/bregen` on those servers. The fully qualified `/blocksregenerator:blocksregenerator` command explicitly selects this plugin. Only BlocksRegenerator command names are registered.
 
-Use `/blocksregenerator` to open the inventory editor. Commands require `blocksregenerator.admin`; the compatibility permission `oreregenerator.admin` also grants access. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
+Use `/blocksregenerator` to open the inventory editor. Commands require `blocksregenerator.admin`. Console can run commands except selection, menus, manual mode, clipboard, wand, and outlines.
 
 All successful edits are saved. Changing a region's rules or chains restores its active regenerations before adopting the new configuration. GUI entries are read again by ID before edits, so two administrators do not overwrite each other's unrelated changes.
 
@@ -186,7 +184,7 @@ The GUI exposes chain creation, renaming, stage selection/replacement, move earl
 | --- | --- |
 | `/blocksregenerator copy <region> [all|blocks|chains]` | Copy definitions to your personal clipboard |
 | `/blocksregenerator paste <region>` | Replace copied block/chain collections with independent copies |
-| `/blocksregenerator import oreregenerator` | Import original plugin data from the adjacent `OreRegenerator` plugin directory |
+| `/blocksregenerator import legacy` | Import legacy JSON files copied into `BlocksRegenerator/imports/legacy/` |
 | `/blocksregenerator import ultimate-regen` | Import Ultimate_BlockRegeneration definitions |
 | `/blocksregenerator import minexfarm-regen` | Import MineXFarmRegen definitions |
 | `/blocksregenerator reload` | Reload configuration/messages; alias `rl` |
@@ -290,21 +288,21 @@ Definitions can only use materials present on the running server. `CHAIN` and `I
 
 ## Migrating from another regenerator
 
-Stop the server, remove the previous regeneration plugin JAR and preserve its data directory next to `BlocksRegenerator/`. Start the server and run the corresponding command:
+Stop the server, remove the previous regeneration plugin JAR and preserve its data directory. For a legacy JSON import, create `plugins/BlocksRegenerator/imports/legacy/` and copy `regions.json` plus optional `persistence.json` from your backup into it. The other importers read their source folders beside `BlocksRegenerator/`. Start the server and run the corresponding command:
 
 | Source | Import command | Source folder |
 | --- | --- | --- |
-| OreRegenerator | `/blocksregenerator import oreregenerator` | `plugins/OreRegenerator/` |
+| Legacy JSON | `/blocksregenerator import legacy` | `plugins/BlocksRegenerator/imports/legacy/` |
 | Ultimate_BlockRegeneration | `/blocksregenerator import ultimate-regen` | `plugins/Ultimate_BlockRegeneration/` |
 | MineXFarmRegen | `/blocksregenerator import minexfarm-regen` | `plugins/MineXFarmRegen/` |
 
-OreRegenerator migration reads `regions.json` and optional `persistence.json`. Imports reject existing region ID collisions and preserve their source folders. Do not run two regeneration plugins over the same blocks. This plugin is a new implementation based on the observed behavior of OreRegenerator 2.6.2; see the [reconstruction record](docs/REVERSE_ENGINEERING.md).
+Legacy JSON migration reads `regions.json` and optional `persistence.json`. Imports reject existing region ID collisions and preserve their source folders. Do not run two regeneration plugins over the same blocks. This plugin is a new implementation based on the observed behavior of the supplied legacy artifact (version 2.6.2); see the [reconstruction record](docs/REVERSE_ENGINEERING.md).
 
 ## Troubleshooting
 
 | Symptom | Check |
 | --- | --- |
-| `Unsupported API version 26.3` on 1.21.11 | Replace BlocksRegenerator 1.0.0 with 1.0.2; remove the old JAR |
+| `Unsupported API version 26.3` on 1.21.11 | Replace BlocksRegenerator 1.0.0 with 1.0.3; remove the old JAR |
 | Java is not recognized or the terminal closes immediately | Configure a valid Java executable/JAVA_HOME, run the launcher from a terminal and keep its output visible |
 | `UnsupportedClassVersionError` | Check the Java version used by the actual server launcher; 26.x needs Java 25 |
 | A mined block does not regenerate | Check selected world/bounds, winning region priority, rule material/crop age, other plugins' cancellation and console errors |
@@ -312,12 +310,13 @@ OreRegenerator migration reads `regions.json` and optional `persistence.json`. I
 | Non-rule blocks cannot be broken or placed | Check `allow-block-break`, `allow-block-place` and the claim plugin's permissions |
 | No permission for `/blocksregenerator` | Grant `blocksregenerator.admin` or use the console/operator account |
 | `/br` shows brush commands | WorldEdit/FAWE owns that alias; use `/blocksregenerator`, `/bregen` or `/blocksregenerator:blocksregenerator` |
-| `/or` or `/oreregenerator` no longer works | Use `/blocksregenerator` or `/bregen`; legacy command aliases were removed in 1.0.2 |
 | An import is refused | Check source folder, input format and existing region ID collisions; preserve backups |
 
 Report issues with the server version, Java version, plugin version, relevant configuration and console error. Remove passwords and private data from logs before sharing them.
 
 ## Building and contributing
+
+Ready-to-copy SpigotMC listing text is available in [short description](docs/spigotmc/short-description.txt), [resource description BBCode](docs/spigotmc/description.bbcode) and [documentation BBCode](docs/spigotmc/documentation.bbcode). Paste the BBCode into SpigotMC's BBCode editor; the short description is plain text.
 
 Use JDK 21 or newer and the pinned Maven Wrapper:
 
@@ -333,7 +332,7 @@ Linux/macOS:
 ./mvnw verify
 ```
 
-The result is `target/BlocksRegenerator-1.0.2.jar`. The default build uses the oldest supported API so the same artifact runs across the supported range. To verify a newer API, use JDK 25, for example:
+The result is `target/BlocksRegenerator-1.0.3.jar`. The default build uses the oldest supported API so the same artifact runs across the supported range. To verify a newer API, use JDK 25, for example:
 
 ```sh
 ./mvnw -Dspigot.version=26.3-R0.1-SNAPSHOT clean verify
