@@ -1,5 +1,7 @@
 package dev.lino.blocksregenerator.bukkit;
 
+import dev.lino.blocksregenerator.configuration.RuntimeSettings;
+import java.util.function.Supplier;
 import dev.lino.blocksregenerator.engine.BlockSnapshot;
 import dev.lino.blocksregenerator.engine.PendingRegen;
 import dev.lino.blocksregenerator.engine.RegenerationEngine;
@@ -69,7 +71,8 @@ public final class RegenerationListener implements Listener {
     private final IntegrationRegistry integrations;
     private final BukkitWorldAccess world;
     private final RegionPermissions permissions;
-    private final Messages messages;
+    private final PlayerNotices messages;
+    private final Supplier<RuntimeSettings> settings;
     private final ArrayDeque<BreakIntent> commits = new ArrayDeque<>();
     private final ArrayDeque<CreativeIntent> creative = new ArrayDeque<>();
     private final ArrayDeque<DropCommit> collections = new ArrayDeque<>();
@@ -81,7 +84,7 @@ public final class RegenerationListener implements Listener {
 
     public RegenerationListener(JavaPlugin plugin, RegionIndex regions, RegenerationEngine engine,
                                 IntegrationRegistry integrations, BukkitWorldAccess world,
-                                RegionPermissions permissions, Messages messages) {
+                                RegionPermissions permissions, PlayerNotices messages, Supplier<RuntimeSettings> settings) {
         this.plugin = plugin;
         this.regions = regions;
         this.engine = engine;
@@ -89,11 +92,12 @@ public final class RegenerationListener implements Listener {
         this.world = world;
         this.permissions = permissions;
         this.messages = messages;
+        this.settings = settings;
     }
 
     public void tick() {
         tick++;
-        int budget = Math.clamp(plugin.getConfig().getInt("engine.max-operations-per-tick", 500), 1, 10_000);
+        int budget = settings.get().scheduler().workBudget();
         int creativeBudget = budget;
         while (creativeBudget-- > 0 && !creative.isEmpty()) {
             CreativeIntent intent = creative.remove();
@@ -170,7 +174,7 @@ public final class RegenerationListener implements Listener {
         } catch (RuntimeException error) {
             event.setCancelled(true);
             world.failure(BukkitWorldAccess.key(event.getBlock()), error);
-            messages.send(event.getPlayer(), "integration-error");
+            messages.send(event.getPlayer(), NoticeId.PROVIDER_NOT_READY);
         }
     }
 
@@ -194,7 +198,7 @@ public final class RegenerationListener implements Listener {
         }
         if (!permissions.claimsAllow(region, player, block.getLocation(), ClaimsService.Action.BREAK)) {
             event.setCancelled(true);
-            messages.send(player, "cant-break-block");
+            messages.send(player, NoticeId.MINING_DENIED);
             return;
         }
         if (reserved.contains(key)) {
@@ -204,7 +208,7 @@ public final class RegenerationListener implements Listener {
         PendingRegen active = engine.at(key);
         if (active != null && !active.key().equals(key)) {
             event.setCancelled(true);
-            messages.send(player, "pending-block");
+            messages.send(player, NoticeId.RECOVERY_PENDING);
             return;
         }
         RegenChain chain = active == null ? null : active.chain();
@@ -219,14 +223,14 @@ public final class RegenerationListener implements Listener {
         }
         if (chain != null && stage >= chain.lastIndex() && !chain.lastStageBreakable()) {
             event.setCancelled(true);
-            messages.send(player, "pending-block");
+            messages.send(player, NoticeId.RECOVERY_PENDING);
             return;
         }
         if (chain == null && rule == null) {
             if (!permissions.actionAllowed(region, RegionSetting.ALLOW_BLOCK_BREAK, player,
                     block.getLocation(), ClaimsService.Action.BREAK)) {
                 event.setCancelled(true);
-                messages.send(player, "cant-break-block");
+                messages.send(player, NoticeId.MINING_DENIED);
             }
             return;
         }
@@ -260,7 +264,7 @@ public final class RegenerationListener implements Listener {
                     return;
                 }
                 BlockBreakEvent check = new BlockBreakEvent(upper, player);
-                if (plugin.getConfig().getBoolean("advanced.stacked-blocks.fire-break-events", true)) {
+                if (settings.get().harvesting().notifyStackedBreaks()) {
                     synthetic.add(upperKey);
                     try {
                         Bukkit.getPluginManager().callEvent(check);
@@ -361,7 +365,7 @@ public final class RegenerationListener implements Listener {
                 || !permissions.actionAllowed(region, RegionSetting.ALLOW_BLOCK_PLACE, event.getPlayer(),
                 event.getBlock().getLocation(), ClaimsService.Action.PLACE))) {
             event.setCancelled(true);
-            messages.send(event.getPlayer(), "cant-place-block");
+            messages.send(event.getPlayer(), NoticeId.BUILDING_DENIED);
         }
     }
 
@@ -395,7 +399,7 @@ public final class RegenerationListener implements Listener {
         if (region != null && (occupied(location.getBlock())
                 || !permissions.actionAllowed(region, RegionSetting.ALLOW_BUCKET_USAGE, player, location, action))) {
             event.setCancelled(true);
-            messages.send(player, "cant-use-bucket");
+            messages.send(player, NoticeId.BUCKET_BLOCKED);
         }
     }
 
@@ -415,10 +419,10 @@ public final class RegenerationListener implements Listener {
                 && !permissions.actionAllowed(region, RegionSetting.ALLOW_BLOCK_TRAMPLING, event.getPlayer(),
                 block.getLocation(), ClaimsService.Action.TRAMPLE)) {
             event.setCancelled(true);
-            messages.send(event.getPlayer(), "cant-trample");
+            messages.send(event.getPlayer(), NoticeId.SOIL_PROTECTED);
         }
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && engine.at(key) != null) {
-            messages.send(event.getPlayer(), "regen-time-remaining", engine.remaining(key));
+            messages.send(event.getPlayer(), NoticeId.RECOVERING, engine.remaining(key));
         }
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && integrations.available("nexo")) {
             try {

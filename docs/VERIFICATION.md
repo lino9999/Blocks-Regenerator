@@ -1,5 +1,17 @@
 # Verification
 
+## Version 2.0.0 independent settings and packaging verification
+
+Verified on 26 October 2026. The Java 21 baseline passes 86 unit tests and five post-package integration tests, 91 total, with zero failures or errors. The new tests cover strict settings validation, structured notice rendering and throttling, failed notice reload preservation, packaged namespace/resource boundaries, version-1 settings/message conversion, state-file preservation, existing-file refusal, malformed migration input and active world-lock refusal.
+
+The tested JAR has SHA-256 `885f6b92150c09f060fcd87ceb6c6133a61eadd5e76b3a1669710f3b3edbca6d`. It includes `settings.yml` and `locale/en.yml`, and excludes the former global configuration and message resources. Build-time checks inspect the shaded artifact, require the third-party license notice, reject foreign implementation namespaces and reject retired global paths, message keys and formula tokens. External import-schema identifiers are deliberately retained for interoperability.
+
+The same JAR passed 16 live command/permission/import checks on Paper 1.21.11 build 130 with Java 21, and 45 actual block-world checks on Spigot 26.3 build 4663 with Java 25. Console checks verified new dotted region options, the menu icon option, `uniform` expressions with `players`, reload, region creation/deletion and preservation of three regions from an earlier release. Both isolated installations were upgraded using the shipped utility before starting; `data.json` remained byte-for-byte unchanged during settings conversion. The user's active Skyblock server was not interrupted or migrated.
+
+The separate [technical reconstruction audit](INDEPENDENCE_AUDIT.md) compares archive members, class payload identity, constant-pool strings, source-file metadata and YAML mapping paths against the supplied artifact. It records zero original class/resource payload copies and explains common API/provider/import strings. Those checks are technical evidence, not a clean-room-history or publication-approval certificate.
+
+Local evidence includes `.work/independent-build.log`, Surefire/Failsafe XML reports, `.work/independent-paper.log`, `.work/independent-spigot.log` and the retained audit evidence listed in the audit report. Third-party provider and real-player interaction limits below still apply.
+
 ## Version 1.0.3 naming and publication verification
 
 Verified on 24 October 2026. The Java 21 baseline build passes 73 tests with zero failures or errors. Only `blocksregenerator.admin` and `blocksregenerator.bypass.claims` are declared. Administration and GUI checks use the canonical permission, and the default claim-bypass permission uses the same namespace. Regression tests verify that unrelated permissions cannot grant command access and that the canonical bypass works without an explicit configuration override.

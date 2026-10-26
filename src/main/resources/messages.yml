@@ -1,8 +1,0 @@
-prefix: "&8[&bBlocksRegenerator&8] &r"
-cant-break-block: "&cYou cannot break this block.<delay:5000>"
-cant-place-block: "&cYou cannot place blocks here.<delay:1000>"
-cant-use-bucket: "&cYou cannot use buckets here.<delay:1000>"
-cant-trample: "&cYou cannot trample farmland here.<delay:1000>"
-regen-time-remaining: "&eThis block regenerates in %dd%d %hh%h %mm%m %ss%s.<delay:1000>"
-pending-block: "&cThis block is waiting to regenerate.<delay:1000>"
-integration-error: "&cThis block cannot be processed because its content provider is unavailable.<delay:5000>"

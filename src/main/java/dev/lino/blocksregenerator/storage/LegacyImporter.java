@@ -115,8 +115,9 @@ public final class LegacyImporter {
                 icon = string(source, "region-display-icon");
             }
             for (RegionSetting setting : RegionSetting.values()) {
-                if (source.has(setting.key())) {
-                    settings.put(setting, source.get(setting.key()).getAsBoolean());
+                String legacyKey = setting.name().toLowerCase(Locale.ROOT).replace('_', '-').replace("trampling", "tramping");
+                if (source.has(legacyKey)) {
+                    settings.put(setting, source.get(legacyKey).getAsBoolean());
                 }
             }
         }

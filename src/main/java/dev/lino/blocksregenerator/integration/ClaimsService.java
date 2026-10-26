@@ -1,5 +1,7 @@
 package dev.lino.blocksregenerator.integration;
 
+import dev.lino.blocksregenerator.configuration.RuntimeSettings;
+import java.util.function.Supplier;
 import java.lang.reflect.Array;
 import java.util.HashSet;
 import java.util.List;
@@ -14,12 +16,14 @@ public final class ClaimsService {
 
     private static final List<String> PROVIDERS = List.of("WorldGuard", "GriefPrevention", "Towny", "Lands", "Residence");
     private final JavaPlugin plugin;
+    private final Supplier<RuntimeSettings> settings;
     private final AntiGriefBridge additional;
     private final Set<String> reported = new HashSet<>();
     private Object landsIntegration;
 
-    public ClaimsService(JavaPlugin plugin) {
+    public ClaimsService(JavaPlugin plugin, Supplier<RuntimeSettings> settings) {
         this.plugin = plugin;
+        this.settings = settings;
         this.additional = new AntiGriefBridge(plugin);
     }
 
@@ -161,12 +165,12 @@ public final class ClaimsService {
     }
 
     private boolean enabled() {
-        return plugin.getConfig().getBoolean("hooks.anti-grief.enabled", true);
+        return settings.get().protection().consultProviders();
     }
 
     private boolean bypass(Player player) {
-        if (plugin.getConfig().getBoolean("hooks.anti-grief.ignore-op", true) && player.isOp()) return true;
-        String permission = plugin.getConfig().getString("hooks.anti-grief.bypass-permission", "blocksregenerator.bypass.claims");
+        if (settings.get().protection().operatorsExempt() && player.isOp()) return true;
+        String permission = settings.get().protection().exemptionNode();
         return permission != null && !permission.isBlank() && player.hasPermission(permission);
     }
 

@@ -3,7 +3,9 @@ package dev.lino.blocksregenerator;
 import dev.lino.blocksregenerator.admin.AdminBackend;
 import dev.lino.blocksregenerator.admin.AdminController;
 import dev.lino.blocksregenerator.bukkit.BukkitWorldAccess;
-import dev.lino.blocksregenerator.bukkit.Messages;
+import dev.lino.blocksregenerator.bukkit.PlayerNotices;
+import dev.lino.blocksregenerator.configuration.RuntimeSettings;
+import dev.lino.blocksregenerator.configuration.SettingsRepository;
 import dev.lino.blocksregenerator.bukkit.RegenerationListener;
 import dev.lino.blocksregenerator.bukkit.RegionPermissions;
 import dev.lino.blocksregenerator.engine.DelayExpression;
@@ -20,7 +22,7 @@ import dev.lino.blocksregenerator.storage.LegacyImporter;
 import dev.lino.blocksregenerator.storage.SavedState;
 import dev.lino.blocksregenerator.storage.StateStore;
 import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -46,7 +48,9 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
     private IntegrationRegistry integrations;
     private RegenerationEngine engine;
     private RegenerationListener listener;
-    private Messages messages;
+    private PlayerNotices messages;
+    private SettingsRepository settingsRepository;
+    private RuntimeSettings settings;
     private BukkitWorldAccess world;
     private StateStore storage;
     private AdminController admin;
@@ -60,16 +64,19 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
     @Override
     public void onEnable() {
         try {
-            if (getServer().getPluginManager().getPlugin("OreRegenerator") != null) {
-                throw new IllegalStateException("Remove the conflicting legacy regeneration plugin JAR before enabling BlocksRegenerator");
+            if (Files.exists(getDataFolder().toPath().resolve("data.json"))
+                    && !Files.exists(getDataFolder().toPath().resolve("settings.yml"))) {
+                throw new IllegalStateException("Existing installation detected: prepare the version 2 settings with the upgrade utility before starting");
             }
-            saveDefaultConfig();
-            validateConfiguration();
+            settingsRepository = new SettingsRepository(getDataFolder().toPath().resolve("settings.yml"));
+            try (var defaults = getResource("settings.yml")) {
+                settings = settingsRepository.load(defaults);
+            }
             integrations = new IntegrationRegistry(this);
-            messages = new Messages(this);
+            messages = new PlayerNotices(this);
             world = new BukkitWorldAccess(this, integrations);
             engine = new RegenerationEngine(world, clock, regions::get, this::delay,
-                    getConfig().getInt("engine.max-operations-per-tick", 500));
+                    settings.scheduler().workBudget());
             storage = new StateStore(getDataFolder().toPath().resolve("data.json"), clock, getLogger()::severe);
             SavedState state = storage.load();
             for (Region region : state.regions()) {
@@ -81,7 +88,7 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
             regions.replaceAll(state.regions());
             engine.resume(state.pending().stream().map(world::normalize).toList());
             listener = new RegenerationListener(this, regions, engine, integrations, world,
-                    new RegionPermissions(new ClaimsService(this)), messages);
+                    new RegionPermissions(new ClaimsService(this, this::settings)), messages, this::settings);
             getServer().getPluginManager().registerEvents(listener, this);
             getServer().getPluginManager().registerEvents(this, this);
             integrations.registerCustomBreaks(listener::onCustomBreak);
@@ -113,7 +120,7 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
         try {
             if (initialized) {
                 listener.flush();
-                if (!getConfig().getBoolean("persistent-timers", true)) {
+                if (!settings.recovery().rememberOnRestart()) {
                     engine.restoreAllLoaded();
                 }
                 storage.saveBlocking(state());
@@ -134,7 +141,7 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
     private void tick() {
         listener.tick();
         engine.tick();
-        long interval = Math.max(5, getConfig().getLong("storage.autosave-seconds", 30)) * 20;
+        long interval = settings.recovery().checkpointIntervalSeconds() * 20;
         if (++ticks % interval == 0 && engine.revision() != savedRevision && autosave.isDone()) {
             long revision = engine.revision();
             autosave = storage.save(state()).thenRun(() -> savedRevision = revision);
@@ -148,10 +155,9 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
     private int delay(Region region, RegenRule rule) {
         if (region.setting(RegionSetting.USE_ADVANCED_REGEN_DELAY)) {
             try {
-                double value = DelayExpression.evaluate(getConfig().getString("advanced.regen-delay.expression",
-                                "rUni(%min_delay%, %max_delay%)"),
-                        Map.of("min_delay", (double) rule.delay().min(), "max_delay", (double) rule.delay().max(),
-                                "player_count", (double) getServer().getOnlinePlayers().size()), random);
+                double value = DelayExpression.evaluate(settings.timing().formula(),
+                        Map.of("lower", (double) rule.delay().min(), "upper", (double) rule.delay().max(),
+                                "players", (double) getServer().getOnlinePlayers().size()), random);
                 if (value < 0 || value > DelayRange.LIMIT) {
                     throw new IllegalArgumentException("Calculated delay is outside the supported range");
                 }
@@ -228,11 +234,17 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
 
     @Override
     public void reload() {
-        validateConfiguration();
-        reloadConfig();
-        messages.reload();
+        RuntimeSettings candidate;
+        try {
+            candidate = settingsRepository.read();
+        } catch (IOException error) {
+            throw new IllegalArgumentException("The settings update could not be read", error);
+        }
+        var catalog = messages.read();
+        settings = candidate;
+        messages.replace(catalog);
         warnedExpression = false;
-        engine.budget(getConfig().getInt("engine.max-operations-per-tick", 500));
+        engine.budget(settings.scheduler().workBudget());
         generateGlobals();
     }
 
@@ -289,7 +301,7 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
 
     @Override
     public double evaluate(String expression) {
-        return DelayExpression.evaluate(expression, Map.of("player_count", (double) getServer().getOnlinePlayers().size()), random);
+        return DelayExpression.evaluate(expression, Map.of("players", (double) getServer().getOnlinePlayers().size()), random);
     }
 
     private void validateRegion(Region region) {
@@ -319,22 +331,13 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
         }
     }
 
-    private void validateConfiguration() {
-        try {
-            YamlConfiguration checked = new YamlConfiguration();
-            checked.load(new java.io.File(getDataFolder(), "config.yml"));
-            int operations = checked.getInt("engine.max-operations-per-tick", 500);
-            long autosave = checked.getLong("storage.autosave-seconds", 30);
-            if (operations < 1 || operations > 10_000 || autosave < 5 || autosave > 86400) {
-                throw new IllegalArgumentException("Engine budget must be 1-10000 and autosave seconds 5-86400");
-            }
-        } catch (IOException | org.bukkit.configuration.InvalidConfigurationException error) {
-            throw new IllegalArgumentException("Invalid config.yml", error);
-        }
+    @Override
+    public RuntimeSettings settings() {
+        return settings;
     }
 
     private void generateGlobals() {
-        if (getConfig().getBoolean("generate-global-regions", false)) {
+        if (settings.worlds().automaticCoverage()) {
             for (World world : getServer().getWorlds()) {
                 createGlobal(world);
             }
@@ -351,15 +354,15 @@ public final class BlocksRegeneratorPlugin extends JavaPlugin implements AdminBa
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        if (getConfig().getBoolean("generate-global-regions", false)) {
+        if (settings.worlds().automaticCoverage()) {
             createGlobal(event.getWorld());
         }
     }
 
     private void runConfiguredImports() throws IOException {
-        for (String source : List.of("ultimate-regen", "minexfarm-regen")) {
+        for (String source : settings.imports()) {
             Path marker = getDataFolder().toPath().resolve("imports").resolve(source + ".complete");
-            if (getConfig().getBoolean("advanced.converters." + source + ".enabled", false) && !Files.exists(marker)) {
+            if (!Files.exists(marker)) {
                 importData(source);
                 Files.createDirectories(marker.getParent());
                 Files.writeString(marker, "Imported successfully. Original files were preserved.\n");

@@ -4,6 +4,8 @@ Use `/blocksregenerator` to open the inventory editor. Short aliases are `/brege
 
 WorldEdit/FAWE may use `/br` for brushes. Use `/blocksregenerator` or `/bregen` to avoid that collision. `/blocksregenerator:blocksregenerator` explicitly selects this plugin's command.
 
+Settings commands in 2.0.0 use the grouped keys documented below. These public command keys do not change the enum-based region settings already stored in schema-1 `data.json`.
+
 All successful edits are saved. Changing a region's rules or chains restores its active regenerations before adopting the new configuration. GUI entries are read again by ID before edits, so two administrators do not overwrite each other's unrelated changes.
 
 ## Selection and regions
@@ -53,15 +55,15 @@ Use `/blocksregenerator setting get <region> <setting>` or `/blocksregenerator s
 
 | Setting | Default |
 | --- | --- |
-| `allow-block-break` | false |
-| `allow-block-place` | false |
-| `auto-inventory` | false |
-| `allow-block-tramping` | true |
-| `allow-bucket-usage` | false |
-| `use-advanced-regen-delay` | false |
-| `respect-claims` | true |
+| `mining.allow-unmatched` | false |
+| `construction.enabled` | false |
+| `harvest.collect-items` | false |
+| `soil.can-flatten` | true |
+| `liquids.enabled` | false |
+| `timing.use-formula` | false |
+| `protection.check-access` | true |
 
-The corrected spelling `allow-block-trampling` is accepted. `region-display-icon` takes an item material name.
+`menu.icon` takes an item material name. The documented 2.0.0 setting names replace the old 1.x command-key aliases.
 
 ## Regen chains
 
@@ -93,7 +95,7 @@ The GUI exposes chain creation, renaming, stage selection/replacement, move earl
 | `/blocksregenerator import legacy` | Import `regions.json` and optional `persistence.json` copied into `plugins/BlocksRegenerator/imports/legacy/` |
 | `/blocksregenerator import ultimate-regen` | Import Ultimate_BlockRegeneration definitions |
 | `/blocksregenerator import minexfarm-regen` | Import MineXFarmRegen definitions |
-| `/blocksregenerator reload` | Reload configuration/messages; alias `rl` |
+| `/blocksregenerator reload` | Reload settings.yml and locale/en.yml; alias `rl` |
 | `/blocksregenerator eval <expression>` | Evaluate a supported numeric expression |
 | `/blocksregenerator help` | Show command reference |
 

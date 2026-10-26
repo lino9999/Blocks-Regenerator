@@ -3,13 +3,13 @@ package dev.lino.blocksregenerator.model;
 import java.util.Arrays;
 
 public enum RegionSetting {
-    ALLOW_BLOCK_BREAK("allow-block-break", false),
-    ALLOW_BLOCK_PLACE("allow-block-place", false),
-    AUTO_INVENTORY("auto-inventory", false),
-    ALLOW_BLOCK_TRAMPLING("allow-block-tramping", true),
-    ALLOW_BUCKET_USAGE("allow-bucket-usage", false),
-    USE_ADVANCED_REGEN_DELAY("use-advanced-regen-delay", false),
-    RESPECT_CLAIMS("respect-claims", true);
+    ALLOW_BLOCK_BREAK("mining.allow-unmatched", false),
+    ALLOW_BLOCK_PLACE("construction.enabled", false),
+    AUTO_INVENTORY("harvest.collect-items", false),
+    ALLOW_BLOCK_TRAMPLING("soil.can-flatten", true),
+    ALLOW_BUCKET_USAGE("liquids.enabled", false),
+    USE_ADVANCED_REGEN_DELAY("timing.use-formula", false),
+    RESPECT_CLAIMS("protection.check-access", true);
 
     private final String key;
     private final boolean defaultValue;
@@ -28,8 +28,7 @@ public enum RegionSetting {
     }
 
     public static RegionSetting parse(String key) {
-        String normalized = key.replace("allow-block-trampling", "allow-block-tramping");
-        return Arrays.stream(values()).filter(v -> v.key.equalsIgnoreCase(normalized) || v.name().equalsIgnoreCase(key))
+        return Arrays.stream(values()).filter(v -> v.key.equalsIgnoreCase(key))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown region setting: " + key));
     }
 }

@@ -59,13 +59,13 @@ final class RegionOutlines {
                 }
             }
             if (!enabled.isEmpty()) {
-                schedule(Math.clamp(backend.plugin().getConfig().getInt("advanced.region-edges.render-interval", 10), 1, 1200));
+                schedule(backend.settings().visuals().outlineRefreshTicks());
             }
         }, ticks);
     }
 
     private void render(Player player) {
-        double radius = Math.clamp(backend.plugin().getConfig().getInt("advanced.region-edges.render-radius", 40), 1, 256);
+        double radius = backend.settings().visuals().outlineDistanceBlocks();
         Location viewer = player.getLocation();
         List<Region> regions = backend.regions().stream().filter(r -> !r.global() && r.world().equals(player.getWorld().getName())).toList();
         int budget = 600;

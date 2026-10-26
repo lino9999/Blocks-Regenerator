@@ -60,7 +60,7 @@ class RegenerationListenerTest {
     @BeforeEach
     void setUp() {
         JavaPlugin plugin = mock(JavaPlugin.class);
-        when(plugin.getConfig()).thenReturn(new org.bukkit.configuration.file.YamlConfiguration());
+
         integrations = mock(IntegrationRegistry.class);
         access = mock(BukkitWorldAccess.class);
         permissions = mock(RegionPermissions.class);
@@ -70,7 +70,7 @@ class RegenerationListenerTest {
         regions.put(region);
         engine = new RegenerationEngine(access, Clock.fixed(Instant.ofEpochMilli(1000), ZoneOffset.UTC), regions::get,
                 (selectedRegion, selectedRule) -> 5, 20);
-        listener = new RegenerationListener(plugin, regions, engine, integrations, access, permissions, mock(Messages.class));
+        listener = new RegenerationListener(plugin, regions, engine, integrations, access, permissions, mock(PlayerNotices.class), dev.lino.blocksregenerator.configuration.RuntimeSettings::defaults);
         player = mock(Player.class);
         when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
         when(player.getUniqueId()).thenReturn(UUID.randomUUID());

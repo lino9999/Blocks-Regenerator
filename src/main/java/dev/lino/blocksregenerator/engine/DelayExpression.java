@@ -81,19 +81,6 @@ public final class DelayExpression {
             require(')');
             return value;
         }
-        if (take('%')) {
-            int start = position;
-            while (position < input.length() && input.charAt(position) != '%') {
-                position++;
-            }
-            String name = input.substring(start, position);
-            require('%');
-            Double value = variables.get(name);
-            if (value == null) {
-                throw new IllegalArgumentException("Unknown variable: " + name);
-            }
-            return value;
-        }
         if (position < input.length() && (Character.isDigit(input.charAt(position)) || input.charAt(position) == '.')) {
             int start = position;
             while (position < input.length() && (Character.isDigit(input.charAt(position)) || input.charAt(position) == '.')) {
@@ -142,7 +129,7 @@ public final class DelayExpression {
     }
 
     private double function(String name, List<Double> args) {
-        int count = name.equals("min") || name.equals("max") || name.equals("pow") || name.equals("runi") ? 2 : 1;
+        int count = name.equals("min") || name.equals("max") || name.equals("pow") || name.equals("uniform") ? 2 : 1;
         if (args.size() != count) {
             throw new IllegalArgumentException("Wrong number of arguments for " + name);
         }
@@ -161,7 +148,7 @@ public final class DelayExpression {
             case "cos" -> Math.cos(a);
             case "ln" -> Math.log(a);
             case "log" -> Math.log10(a);
-            case "runi" -> {
+            case "uniform" -> {
                 if (!Double.isFinite(a) || !Double.isFinite(b) || b < a) {
                     throw new IllegalArgumentException("Invalid random range");
                 }

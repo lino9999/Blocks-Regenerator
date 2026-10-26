@@ -109,7 +109,7 @@ public final class AdminController implements CommandExecutor, TabCompleter, Lis
                     suggestions.addAll(regionIds());
                 } else if (root.equals("setting") && length == 4) {
                     suggestions.addAll(Arrays.stream(RegionSetting.values()).map(RegionSetting::key).toList());
-                    suggestions.add("region-display-icon");
+                    suggestions.add("menu.icon");
                 } else if (root.equals("setting") && length == 5) {
                     suggestions.addAll(List.of("true", "false"));
                 } else if (root.equals("block") && (length == 4 || length == 5 && args[1].equalsIgnoreCase("add"))) {

@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class DelayExpressionTest {
     @Test
     void evaluatesDocumentedPopulationFormula() {
-        double result = DelayExpression.evaluate("%min_delay% + (%max_delay% - %min_delay%) / (1 + %player_count%)",
-                Map.of("min_delay", 5d, "max_delay", 25d, "player_count", 3d), new Random(1));
+        double result = DelayExpression.evaluate("lower + (upper - lower) / (1 + players)",
+                Map.of("lower", 5d, "upper", 25d, "players", 3d), new Random(1));
         assertEquals(10, result);
     }
 
@@ -25,20 +25,20 @@ class DelayExpressionTest {
     @Test
     void randomRangeRemainsWithinBounds() {
         for (int index = 0; index < 100; index++) {
-            double value = eval("rUni(2, 4)");
+            double value = eval("uniform(2, 4)");
             assertTrue(value >= 2 && value <= 4);
         }
-        assertEquals(3, eval("rUni(3,3)"));
+        assertEquals(3, eval("uniform(3,3)"));
     }
 
     @Test
     void rejectsNonFiniteUnknownAndDeepExpressions() {
         assertThrows(IllegalArgumentException.class, () -> eval("1/0"));
         assertThrows(IllegalArgumentException.class, () -> eval("unknown(1)"));
-        assertThrows(IllegalArgumentException.class, () -> eval("%missing%"));
+        assertThrows(IllegalArgumentException.class, () -> eval("missing"));
         assertThrows(IllegalArgumentException.class, () -> eval("(".repeat(60) + "1" + ")".repeat(60)));
         assertThrows(IllegalArgumentException.class, () -> eval("1) trailing"));
-        assertThrows(IllegalArgumentException.class, () -> eval("rUni(5,1)"));
+        assertThrows(IllegalArgumentException.class, () -> eval("uniform(5,1)"));
     }
 
     @Test

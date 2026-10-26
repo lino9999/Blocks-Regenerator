@@ -1,7 +1,7 @@
 [CENTER][SIZE=7][B][COLOR=#2AA9B8]BLOCKSREGENERATOR[/COLOR][/B][/SIZE]
 [SIZE=5][B]Documentation & Setup Guide[/B][/SIZE]
 [COLOR=#E6A23C]INSTALL  •  CONFIGURE  •  REGENERATE[/COLOR]
-[SIZE=3]For version 1.0.3 • Created by Lino[/SIZE]
+[SIZE=3]For version 2.0.0 • Created by Lino[/SIZE]
 
 [URL=https://github.com/lino9999/Blocks-Regenerator/releases/latest]Download[/URL]  |  [URL=https://github.com/lino9999/Blocks-Regenerator#readme]GitHub guide[/URL]  |  [URL=https://github.com/lino9999/Blocks-Regenerator/issues]Support[/URL][/CENTER]
 
@@ -42,13 +42,19 @@ Use one BlocksRegenerator JAR across these releases. Vanilla block regeneration 
 Generated files are stored in [ICODE]plugins/BlocksRegenerator/[/ICODE]:
 [TABLE]
 [TR][TH]File[/TH][TH]Purpose[/TH][/TR]
-[TR][TD][ICODE]config.yml[/ICODE][/TD][TD]Global configuration and integration options.[/TD][/TR]
-[TR][TD][ICODE]messages.yml[/ICODE][/TD][TD]Player-facing messages, colors and message throttling.[/TD][/TR]
+[TR][TD][ICODE]settings.yml[/ICODE][/TD][TD]Versioned, typed global configuration and integration options.[/TD][/TR]
+[TR][TD][ICODE]locale/en.yml[/ICODE][/TD][TD]Versioned notice text, colors and per-notice cooldowns.[/TD][/TR]
 [TR][TD][ICODE]data.json[/ICODE][/TD][TD]Region definitions and pending recovery snapshots.[/TD][/TR]
 [TR][TD][ICODE]data.json.bak[/ICODE][/TD][TD]The preceding saved-state version.[/TD][/TR]
 [/TABLE]
 
-[B]Updating:[/B] stop the server, keep the data folder, replace the old JAR and start it again. A full restart is required for command registration and JAR changes. [ICODE]/bregen reload[/ICODE] reloads configuration and messages.
+[B]Updating from 1.x:[/B] stop the server and back up its worlds and plugin folder. The utility requires JDK 21 or newer and the server's SnakeYAML library. Keep its adjacent [ICODE]UpgradeSettings.java[/ICODE] helper by using a source checkout or extracted source archive, then run:
+[CODE].\tools\Upgrade-BlocksRegenerator.ps1 -PluginDirectory "C:\Minecraft\plugins\BlocksRegenerator"[/CODE]
+Use your actual absolute plugin data path. Java defaults to [ICODE]java[/ICODE]; pass [ICODE]-JavaExecutable "C:\Java\jdk-21\bin\java.exe"[/ICODE] if it is not on PATH. SnakeYAML is discovered beneath the server's libraries; [ICODE]-YamlLibrary <absolute jar path>[/ICODE] overrides discovery.
+
+The script backs up the 1.x settings, messages and saved state, translates supported custom options into [ICODE]settings.yml[/ICODE] and [ICODE]locale/en.yml[/ICODE], and refuses to overwrite existing 2.x configuration files. Review the results before replacing the JAR and starting 2.0.0. It leaves [ICODE]data.json[/ICODE] unchanged; keep that file and matching worlds. Its schema remains 1, and persisted region models do not need a format change.
+
+A full restart is required for JAR changes. [ICODE]/bregen reload[/ICODE] reloads the new settings and notice catalog. Do not run the settings upgrade while the server is active. Retired 1.x global keys and inline message syntax are not runtime aliases.
 
 [B]Alias collision:[/B] WorldEdit/FAWE may own [ICODE]/br[/ICODE]. Use [ICODE]/blocksregenerator[/ICODE], [ICODE]/bregen[/ICODE] or the explicit [ICODE]/blocksregenerator:blocksregenerator[/ICODE] command.
 
@@ -98,7 +104,7 @@ A block selector accepts the original ID, UUID or 1-based registration number. M
 Select a separate area, then:
 [CODE]/blocksregenerator create farm
 /blocksregenerator block add farm crop:WHEAT_SEEDS@7 AIR 10
-/blocksregenerator setting set farm allow-block-trampling false[/CODE]
+/blocksregenerator setting set farm soil.can-flatten false[/CODE]
 
 Only age-7 wheat matches. The captured mature state returns after ten seconds. Use [ICODE]crop:WHEAT_SEEDS[/ICODE] to match any age. To edit an existing crop requirement:
 [CODE]/blocksregenerator block age farm WHEAT_SEEDS 7
@@ -153,28 +159,28 @@ Crops and furniture use standalone rules instead of chain stages. The GUI shows 
 
 [SIZE=5][B][COLOR=#2AA9B8]06  |  PER-REGION SETTINGS[/COLOR][/B][/SIZE]
 
-[CODE]/blocksregenerator setting get mine auto-inventory
-/blocksregenerator setting set mine auto-inventory true
-/blocksregenerator setting set mine region-display-icon DIAMOND_ORE[/CODE]
+[CODE]/blocksregenerator setting get mine harvest.collect-items
+/blocksregenerator setting set mine harvest.collect-items true
+/blocksregenerator setting set mine menu.icon DIAMOND_ORE[/CODE]
 
 Boolean values must be [ICODE]true[/ICODE] or [ICODE]false[/ICODE].
 
 [TABLE]
 [TR][TH]Setting[/TH][TH]Local default[/TH][TH]Effect[/TH][/TR]
-[TR][TD][ICODE]allow-block-break[/ICODE][/TD][TD]false[/TD][TD]Allow ordinary breaking of blocks that are not handled by a matching regeneration rule.[/TD][/TR]
-[TR][TD][ICODE]allow-block-place[/ICODE][/TD][TD]false[/TD][TD]Allow ordinary player block placement.[/TD][/TR]
-[TR][TD][ICODE]auto-inventory[/ICODE][/TD][TD]false[/TD][TD]Collect attributed drops into the player's inventory; drop overflow into the world.[/TD][/TR]
-[TR][TD][ICODE]allow-block-tramping[/ICODE][/TD][TD]true[/TD][TD]Allow natural farmland trampling. The corrected spelling [ICODE]allow-block-trampling[/ICODE] is also accepted.[/TD][/TR]
-[TR][TD][ICODE]allow-bucket-usage[/ICODE][/TD][TD]false[/TD][TD]Allow bucket use where the region and protection checks permit it.[/TD][/TR]
-[TR][TD][ICODE]use-advanced-regen-delay[/ICODE][/TD][TD]false[/TD][TD]Use the configured advanced delay expression.[/TD][/TR]
-[TR][TD][ICODE]respect-claims[/ICODE][/TD][TD]true[/TD][TD]Check enabled land-protection integrations.[/TD][/TR]
-[TR][TD][ICODE]region-display-icon[/ICODE][/TD][TD]GRASS_BLOCK[/TD][TD]Choose the item material displayed for this region in menus.[/TD][/TR]
+[TR][TD][ICODE]mining.allow-unmatched[/ICODE][/TD][TD]false[/TD][TD]Allow ordinary breaking of blocks that are not handled by a matching regeneration rule.[/TD][/TR]
+[TR][TD][ICODE]construction.enabled[/ICODE][/TD][TD]false[/TD][TD]Allow ordinary player block placement.[/TD][/TR]
+[TR][TD][ICODE]harvest.collect-items[/ICODE][/TD][TD]false[/TD][TD]Collect attributed drops into the player's inventory; drop overflow into the world.[/TD][/TR]
+[TR][TD][ICODE]soil.can-flatten[/ICODE][/TD][TD]true[/TD][TD]Allow natural farmland trampling.[/TD][/TR]
+[TR][TD][ICODE]liquids.enabled[/ICODE][/TD][TD]false[/TD][TD]Allow bucket use where the region and protection checks permit it.[/TD][/TR]
+[TR][TD][ICODE]timing.use-formula[/ICODE][/TD][TD]false[/TD][TD]Use the configured advanced delay expression.[/TD][/TR]
+[TR][TD][ICODE]protection.check-access[/ICODE][/TD][TD]true[/TD][TD]Check enabled land-protection integrations.[/TD][/TR]
+[TR][TD][ICODE]menu.icon[/ICODE][/TD][TD]GRASS_BLOCK[/TD][TD]Choose the item material displayed for this region in menus.[/TD][/TR]
 [/TABLE]
 
-Global regions start with [ICODE]allow-block-break[/ICODE] and [ICODE]allow-block-place[/ICODE] enabled. Other settings retain their defaults. Claim-provider permissions and region restrictions are separate checks.
+Global regions start with [ICODE]mining.allow-unmatched[/ICODE] and [ICODE]construction.enabled[/ICODE] enabled. Other settings retain their defaults. Claim-provider permissions and region restrictions are separate checks.
 
 [B]Automatic inventory[/B]
-Enable [ICODE]auto-inventory[/ICODE] to collect attributed item drops. A full inventory does not silently delete overflow; it is dropped in the world. This is item collection, not an advertised experience or economy reward system.
+Enable [ICODE]harvest.collect-items[/ICODE] to collect attributed item drops. A full inventory does not silently delete overflow; it is dropped in the world. This is item collection, not an advertised experience or economy reward system.
 
 [SIZE=5][B][COLOR=#2AA9B8]07  |  INVENTORY EDITORS & PERSONAL TOOLS[/COLOR][/B][/SIZE]
 
@@ -222,65 +228,73 @@ Ordinary players need no additional BlocksRegenerator permission to mine configu
 If LuckPerms is installed:
 [CODE]/lp group admin permission set blocksregenerator.admin true[/CODE]
 
-By default, [ICODE]hooks.anti-grief.ignore-op: true[/ICODE] also bypasses this plugin's claim checks for operators. Use a non-operator account when validating ordinary-player protection. The claim-bypass permission does not bypass all region rules or grant permissions inside another plugin.
+By default, [ICODE]protection.operators-exempt: true[/ICODE] also bypasses this plugin's claim checks for operators. Use a non-operator account when validating ordinary-player protection. The claim-bypass permission does not bypass all region rules or grant permissions inside another plugin.
 
-[SIZE=5][B][COLOR=#2AA9B8]10  |  GLOBAL CONFIGURATION & MESSAGES[/COLOR][/B][/SIZE]
+[SIZE=5][B][COLOR=#2AA9B8]10  |  TYPED YAML SETTINGS & PLAYER NOTICES[/COLOR][/B][/SIZE]
 
-Edit [ICODE]plugins/BlocksRegenerator/config.yml[/ICODE], then run [ICODE]/bregen reload[/ICODE].
+Edit [ICODE]plugins/BlocksRegenerator/settings.yml[/ICODE], then run [ICODE]/bregen reload[/ICODE]. The runtime reads the new format only. Unknown keys, wrong value types, unsupported versions and invalid ranges are rejected; malformed files are preserved for correction.
 
-[SPOILER=Complete configuration reference]
+[SPOILER=Complete settings.yml reference]
 [TABLE]
-[TR][TH]Configuration key[/TH][TH]Default[/TH][TH]Purpose[/TH][/TR]
-[TR][TD][ICODE]generate-global-regions[/ICODE][/TD][TD]false[/TD][TD]Create missing global region definitions for loaded worlds.[/TD][/TR]
-[TR][TD][ICODE]persistent-timers[/ICODE][/TD][TD]true[/TD][TD]Save remaining regeneration time across restarts.[/TD][/TR]
-[TR][TD][ICODE]storage.autosave-seconds[/ICODE][/TD][TD]30[/TD][TD]Checkpoint interval in seconds; effective minimum is 5 seconds.[/TD][/TR]
-[TR][TD][ICODE]engine.max-operations-per-tick[/ICODE][/TD][TD]500[/TD][TD]Limit queue work processed during a server tick.[/TD][/TR]
-[TR][TD][ICODE]hooks.anti-grief.enabled[/ICODE][/TD][TD]true[/TD][TD]Enable optional land-protection checks.[/TD][/TR]
-[TR][TD][ICODE]hooks.anti-grief.ignore-op[/ICODE][/TD][TD]true[/TD][TD]Bypass this plugin's claim checks for server operators.[/TD][/TR]
-[TR][TD][ICODE]hooks.anti-grief.bypass-permission[/ICODE][/TD][TD]blocksregenerator.bypass.claims[/TD][TD]Permission used for this plugin's claim bypass.[/TD][/TR]
-[TR][TD][ICODE]advanced.regen-delay.expression[/ICODE][/TD][TD]rUni(%min_delay%, %max_delay%)[/TD][TD]Delay formula used by regions with advanced delays enabled.[/TD][/TR]
-[TR][TD][ICODE]advanced.region-edges.render-radius[/ICODE][/TD][TD]40[/TD][TD]Distance used when drawing personal region outlines.[/TD][/TR]
-[TR][TD][ICODE]advanced.region-edges.render-interval[/ICODE][/TD][TD]10[/TD][TD]Outline update interval in server ticks.[/TD][/TR]
-[TR][TD][ICODE]advanced.alternatives.auto-inventory[/ICODE][/TD][TD]false[/TD][TD]Enable deferred drop collection for automatic inventory.[/TD][/TR]
-[TR][TD][ICODE]advanced.stacked-blocks.fire-break-events[/ICODE][/TD][TD]true[/TD][TD]Fire an independent break event for each upper stacked block so other plugins can cancel it.[/TD][/TR]
-[TR][TD][ICODE]advanced.converters.ultimate-regen.enabled[/ICODE][/TD][TD]false[/TD][TD]Enable automatic import of that source on startup.[/TD][/TR]
-[TR][TD][ICODE]advanced.converters.minexfarm-regen.enabled[/ICODE][/TD][TD]false[/TD][TD]Enable automatic import of that source on startup.[/TD][/TR]
-[TR][TD][ICODE]advanced.converters.ultimate-regen.remove-data[/ICODE][/TD][TD]false[/TD][TD]Compatibility option; source-folder deletion is not performed.[/TD][/TR]
-[TR][TD][ICODE]advanced.converters.minexfarm-regen.remove-data[/ICODE][/TD][TD]false[/TD][TD]Compatibility option; source-folder deletion is not performed.[/TD][/TR]
+[TR][TH]Setting[/TH][TH]Default[/TH][TH]Purpose[/TH][/TR]
+[TR][TD][ICODE]format[/ICODE][/TD][TD][ICODE]1[/ICODE][/TD][TD]Settings document version; unsupported versions are rejected.[/TD][/TR]
+[TR][TD][ICODE]worlds.automatic-coverage[/ICODE][/TD][TD][ICODE]false[/ICODE][/TD][TD]Create missing global definitions for loaded worlds.[/TD][/TR]
+[TR][TD][ICODE]recovery.remember-on-restart[/ICODE][/TD][TD][ICODE]true[/ICODE][/TD][TD]Keep remaining regeneration times across clean restarts.[/TD][/TR]
+[TR][TD][ICODE]recovery.checkpoint-interval-seconds[/ICODE][/TD][TD][ICODE]30[/ICODE][/TD][TD]Save recovery checkpoints; valid range 5–86400 seconds.[/TD][/TR]
+[TR][TD][ICODE]scheduler.work-budget[/ICODE][/TD][TD][ICODE]500[/ICODE][/TD][TD]Maximum queue work per tick; valid range 1–10000.[/TD][/TR]
+[TR][TD][ICODE]protection.consult-providers[/ICODE][/TD][TD][ICODE]true[/ICODE][/TD][TD]Check enabled land-protection providers.[/TD][/TR]
+[TR][TD][ICODE]protection.operators-exempt[/ICODE][/TD][TD][ICODE]true[/ICODE][/TD][TD]Exempt operators from this plugin's claim checks.[/TD][/TR]
+[TR][TD][ICODE]protection.exemption-node[/ICODE][/TD][TD][ICODE]blocksregenerator.bypass.claims[/ICODE][/TD][TD]Permission used for claim-check exemption.[/TD][/TR]
+[TR][TD][ICODE]timing.formula[/ICODE][/TD][TD][ICODE]uniform(lower, upper)[/ICODE][/TD][TD]Expression used by regions that enable formula-based delays.[/TD][/TR]
+[TR][TD][ICODE]visuals.outline-distance-blocks[/ICODE][/TD][TD][ICODE]40[/ICODE][/TD][TD]Personal outline distance; valid range 1–256 blocks.[/TD][/TR]
+[TR][TD][ICODE]visuals.outline-refresh-ticks[/ICODE][/TD][TD][ICODE]10[/ICODE][/TD][TD]Outline update interval; valid range 1–1200 ticks.[/TD][/TR]
+[TR][TD][ICODE]harvesting.notify-stacked-breaks[/ICODE][/TD][TD][ICODE]true[/ICODE][/TD][TD]Emit cancellable break events for upper stacked blocks.[/TD][/TR]
+[TR][TD][ICODE]imports.on-start[/ICODE][/TD][TD][ICODE][][/ICODE][/TD][TD]Optional startup import sources: legacy, ultimate-regen and minexfarm-regen.[/TD][/TR]
 [/TABLE]
 [/SPOILER]
 
-[B]Player messages[/B]
-Edit [ICODE]messages.yml[/ICODE] and reload. Messages support [ICODE]&[/ICODE] color codes and a per-player throttle suffix:
-[CODE]cant-break-block: "&cYou cannot break this block.<delay:5000>"[/CODE]
-This example throttles that message to once every five seconds per player.
+Startup imports are selected through [ICODE]imports.on-start[/ICODE]. An empty list disables automatic imports. Source files are retained after successful import.
 
-Remaining-time placeholders are [ICODE]%dd%[/ICODE] (days), [ICODE]%hh%[/ICODE] (hours), [ICODE]%mm%[/ICODE] (minutes), [ICODE]%ss%[/ICODE] (seconds) and [ICODE]%ms%[/ICODE] (milliseconds).
+[B]Structured player notices[/B]
+Edit [ICODE]locale/en.yml[/ICODE] and reload. The catalog has [ICODE]format: 1[/ICODE], a [ICODE]badge[/ICODE] and named notices. Each notice stores its text and numeric cooldown separately. Example entry:
+[CODE]format: 1
+badge: "&8[&3BlocksRegenerator&8]&r "
+notices:
+  mining-denied:
+    text: "&cMining is disabled at this position."
+    cooldown-ms: 3000[/CODE]
+
+This entry throttles that notice to once every three seconds per player. Keep the complete generated catalog when customizing it.
+
+Notice IDs are [ICODE]mining-denied[/ICODE], [ICODE]building-denied[/ICODE], [ICODE]bucket-blocked[/ICODE], [ICODE]soil-protected[/ICODE], [ICODE]recovering[/ICODE], [ICODE]provider-not-ready[/ICODE] and [ICODE]recovery-pending[/ICODE].
+
+Text supports [ICODE]&[/ICODE] color codes. Time tokens are [ICODE]{remaining}[/ICODE], [ICODE]{days}[/ICODE], [ICODE]{hours}[/ICODE], [ICODE]{minutes}[/ICODE], [ICODE]{seconds}[/ICODE] and [ICODE]{millis}[/ICODE]. Cooldowns use the separate [ICODE]cooldown-ms[/ICODE] field; inline delay suffixes are not part of this format.
 
 [SIZE=5][B][COLOR=#2AA9B8]11  |  ADVANCED DELAY EXPRESSIONS[/COLOR][/B][/SIZE]
 
-The default expression selects a uniform delay between the rule's minimum and maximum:
-[CODE]rUni(%min_delay%, %max_delay%)[/CODE]
+The default [ICODE]timing.formula[/ICODE] selects a uniform delay between the rule's bounds:
+[CODE]uniform(lower, upper)[/CODE]
 
-Enable it for a region:
-[CODE]/blocksregenerator setting set mine use-advanced-regen-delay true[/CODE]
+Enable formula-based delays for a region:
+[CODE]/blocksregenerator setting set mine timing.use-formula true[/CODE]
 
 [TABLE]
 [TR][TH]Expression feature[/TH][TH]Supported values[/TH][/TR]
-[TR][TD]Variables[/TD][TD][ICODE]%min_delay%[/ICODE], [ICODE]%max_delay%[/ICODE], [ICODE]%player_count%[/ICODE][/TD][/TR]
-[TR][TD]Operators[/TD][TD][ICODE]+ - * / ^[/ICODE], parentheses and unary signs[/TD][/TR]
-[TR][TD]Functions[/TD][TD][ICODE]rUni[/ICODE], [ICODE]min[/ICODE], [ICODE]max[/ICODE], [ICODE]pow[/ICODE], [ICODE]abs[/ICODE], [ICODE]sqrt[/ICODE], [ICODE]floor[/ICODE], [ICODE]ceil[/ICODE], [ICODE]round[/ICODE], [ICODE]sin[/ICODE], [ICODE]cos[/ICODE], [ICODE]ln[/ICODE], [ICODE]log[/ICODE][/TD][/TR]
-[TR][TD]Constants[/TD][TD][ICODE]pi[/ICODE] and [ICODE]e[/ICODE][/TD][/TR]
+[TR][TD]Variables[/TD][TD]Bare [ICODE]lower[/ICODE], [ICODE]upper[/ICODE] and [ICODE]players[/ICODE] identifiers for the rule's minimum delay, maximum delay and player count.[/TD][/TR]
+[TR][TD]Operators[/TD][TD][ICODE]+ - * / ^[/ICODE], parentheses and unary signs.[/TD][/TR]
+[TR][TD]Functions[/TD][TD][ICODE]uniform[/ICODE], [ICODE]min[/ICODE], [ICODE]max[/ICODE], [ICODE]pow[/ICODE], [ICODE]abs[/ICODE], [ICODE]sqrt[/ICODE], [ICODE]floor[/ICODE], [ICODE]ceil[/ICODE], [ICODE]round[/ICODE], [ICODE]sin[/ICODE], [ICODE]cos[/ICODE], [ICODE]ln[/ICODE] and [ICODE]log[/ICODE].[/TD][/TR]
+[TR][TD]Constants[/TD][TD][ICODE]pi[/ICODE] and [ICODE]e[/ICODE].[/TD][/TR]
+[TR][TD]Length[/TD][TD]At most 1024 characters.[/TD][/TR]
 [/TABLE]
 
-Example expression in [ICODE]advanced.regen-delay.expression[/ICODE]:
-[CODE]%min_delay% + (%max_delay% - %min_delay%) * rUni(0, 1) / (1 + %player_count%)[/CODE]
+Example formula:
+[CODE]lower + (upper - lower) * uniform(0, 1) / (1 + players)[/CODE]
 
 A larger online player count narrows this example's additional random delay. To check arithmetic:
 [CODE]/blocksregenerator eval 2 + 3 * 4[/CODE]
-The result is 14. The console evaluator supplies [ICODE]%player_count%[/ICODE]; rule-specific minimum/maximum variables are supplied during actual regeneration. Substitute numeric values when checking those parts manually.
+The result is 14. The console evaluator supplies [ICODE]players[/ICODE]; rule-specific [ICODE]lower[/ICODE] and [ICODE]upper[/ICODE] bounds are supplied during actual regeneration. Substitute numeric bounds when testing those parts manually.
 
-Invalid or out-of-range regeneration expressions log a warning and use the rule's validated delay range. The evaluator uses the documented bounded grammar.
+Invalid or out-of-range regeneration formulas produce a diagnostic and use the rule's validated delay range. Percent-wrapped variables and the retired function alias are not accepted by the 2.0.0 runtime.
 
 [SIZE=5][B][COLOR=#2AA9B8]12  |  CUSTOM BLOCKS, FURNITURE & LAND CLAIMS[/COLOR][/B][/SIZE]
 
@@ -305,7 +319,7 @@ WorldGuard, GriefPrevention, Towny, Lands and Residence.
 [B]Additional recognized protection plugins[/B]
 Kingdoms, IridiumSkyblock, CrashClaim, GriefDefender, HuskClaims, BentoBox, HuskTowns, PlotSquared, SuperiorSkyblock2, FabledSkyBlock, RedProtect, Landlord, uSkyBlock, XClaim, UltimateClaims, UltimateClans, PreciousStones, Dominion, Factions, NoBuildPlus, Protect, SimpleClaimSystem and LandClaimPlugin. Additional checks use bundled AntiGriefLib. ProtectionStones relies on WorldGuard protection.
 
-Keep [ICODE]respect-claims[/ICODE] enabled in protected regions. Failed protection adapters deny affected actions and report a diagnostic. Missing custom providers preserve definitions and postpone affected regeneration instead of substituting vanilla content.
+Keep [ICODE]protection.check-access[/ICODE] enabled in protected regions. Failed protection adapters deny affected actions and report a diagnostic. Missing custom providers preserve definitions and postpone affected regeneration instead of substituting vanilla content.
 
 [B]Provider versions matter:[/B] support adapters do not establish compatibility with every third-party release. Test custom furniture, drops, event cancellation and claims using your exact provider versions before opening an area to players.
 
@@ -317,7 +331,7 @@ Keep [ICODE]respect-claims[/ICODE] enabled in protected regions. Failed protecti
 [*]Clean restarts preserve remaining timer milliseconds. Time does not count down while the server is stopped.
 [*]Unloaded chunks and worlds retain their pending recovery entries. Timers never force chunks to load.
 [*]Periodic checkpoints default to 30 seconds. A crash or forced termination can lose changes since the last checkpoint.
-[*]Turning [ICODE]persistent-timers[/ICODE] off restores loaded entries at shutdown while retaining unloaded recovery entries.
+[*]Turning [ICODE]recovery.remember-on-restart[/ICODE] off restores loaded entries at shutdown while retaining unloaded recovery entries.
 [/LIST]
 
 [CODE]/blocksregenerator regenerate mine[/CODE]
@@ -344,7 +358,7 @@ Other supported imports:
 [TR][TD]MineXFarmRegen[/TD][TD][ICODE]/bregen import minexfarm-regen[/ICODE][/TD][TD][ICODE]plugins/MineXFarmRegen/[/ICODE][/TD][/TR]
 [/TABLE]
 
-Imports preserve their source files and reject existing region ID collisions. Foreign converter [ICODE]remove-data[/ICODE] options do not delete source folders. Use [ICODE]convert[/ICODE] as an alias for [ICODE]import[/ICODE] if preferred. Do not run two regeneration plugins over the same blocks.
+Imports preserve their source files and reject existing region ID collisions. Use [ICODE]convert[/ICODE] as an alias for [ICODE]import[/ICODE] if preferred. Do not run two regeneration plugins over the same blocks.
 
 [SIZE=5][B][COLOR=#2AA9B8]15  |  COMPLETE COMMAND REFERENCE[/COLOR][/B][/SIZE]
 
@@ -405,7 +419,7 @@ Every short command below also works with the full primary command.
 [TR][TD][ICODE]/bregen import legacy[/ICODE][/TD][TD]Import [ICODE]regions.json[/ICODE] and optional [ICODE]persistence.json[/ICODE] copied into [ICODE]plugins/BlocksRegenerator/imports/legacy/[/ICODE][/TD][/TR]
 [TR][TD][ICODE]/bregen import ultimate-regen[/ICODE][/TD][TD]Import Ultimate_BlockRegeneration definitions[/TD][/TR]
 [TR][TD][ICODE]/bregen import minexfarm-regen[/ICODE][/TD][TD]Import MineXFarmRegen definitions[/TD][/TR]
-[TR][TD][ICODE]/bregen reload[/ICODE][/TD][TD]Reload configuration/messages; alias [ICODE]rl[/ICODE][/TD][/TR]
+[TR][TD][ICODE]/bregen reload[/ICODE][/TD][TD]Reload settings and the notice catalog; alias [ICODE]rl[/ICODE][/TD][/TR]
 [TR][TD][ICODE]/bregen eval <expression>[/ICODE][/TD][TD]Evaluate a supported numeric expression[/TD][/TR]
 [TR][TD][ICODE]/bregen help[/ICODE][/TD][TD]Show command reference[/TD][/TR]
 [/TABLE]
@@ -433,7 +447,7 @@ Compatible nested forms also work under the current root: [ICODE]/bregen region 
 [TR][TD][B]Ore does not regenerate[/B][/TD][TD]Check region world/bounds, overlap priority, matching material, cancellation by another plugin and console diagnostics.[/TD][/TR]
 [TR][TD][B]A crop cannot be harvested[/B][/TD][TD]Check the exact required age and the region's ordinary block-breaking setting.[/TD][/TR]
 [TR][TD][B]A pending block has not returned[/B][/TD][TD]Load its chunk and confirm the custom-content provider is available.[/TD][/TR]
-[TR][TD][B]Players cannot build[/B][/TD][TD]Review [ICODE]allow-block-place[/ICODE], [ICODE]allow-block-break[/ICODE] and the protection plugin's own permissions.[/TD][/TR]
+[TR][TD][B]Players cannot build[/B][/TD][TD]Review [ICODE]construction.enabled[/ICODE], [ICODE]mining.allow-unmatched[/ICODE] and the protection plugin's own permissions.[/TD][/TR]
 [TR][TD][B]A paste replaced existing rules[/B][/TD][TD]Paste replaces the selected collections. Use an appropriate copy mode and keep backups.[/TD][/TR]
 [TR][TD][B]An import is rejected[/B][/TD][TD]Verify source path/format and existing region ID collisions; source files are retained.[/TD][/TR]
 [TR][TD][B]Reload did not change commands[/B][/TD][TD]Restart the server after replacing a JAR. Configuration reload cannot replace plugin code.[/TD][/TR]
@@ -444,7 +458,9 @@ Compatible nested forms also work under the current root: [ICODE]/bregen region 
 
 [URL=https://github.com/lino9999/Blocks-Regenerator/issues]Open a GitHub issue[/URL] with the plugin version, exact server version, Java version, reproduction steps and relevant console error. Remove passwords and private data before sharing configuration or logs.
 
-The project has automated tests across all supported Spigot API versions and live checks on representative servers. Intermediate-version API tests and live server tests have different scopes. Real-player GUI interaction and every optional provider version have not all been exercised end to end. See the [URL=https://github.com/lino9999/Blocks-Regenerator/blob/main/docs/VERIFICATION.md]verification record[/URL] for the exact scope.
+The project records automated API checks and live checks on representative servers in its verification record. Intermediate-version API tests and live server tests have different scopes. Real-player GUI interaction and every optional provider version have not all been exercised end to end. See the [URL=https://github.com/lino9999/Blocks-Regenerator/blob/main/docs/VERIFICATION.md]verification record[/URL] for the exact scope.
+
+Development included analysis of a supplied legacy artifact. The new implementation and configuration are independently reorganized; that technical redesign does not by itself establish publication rights, a clean-room development history or compliance with a hosting site's rules. The source repository retains the reconstruction record and third-party license notices.
 
 [CENTER][B][COLOR=#2AA9B8]BLOCKSREGENERATOR[/COLOR][/B]
 [SIZE=3]Renewable resources. Configurable regions. Practical administration.[/SIZE][/CENTER]

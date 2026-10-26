@@ -1,0 +1,24 @@
+format: 1
+badge: "&8[&3BlocksRegenerator&8]&r "
+notices:
+  mining-denied:
+    text: "&cMining is disabled at this position."
+    cooldown-ms: 3000
+  building-denied:
+    text: "&cConstruction is disabled in this zone."
+    cooldown-ms: 1200
+  bucket-blocked:
+    text: "&cThis zone does not permit bucket actions."
+    cooldown-ms: 1200
+  soil-protected:
+    text: "&eThe farmland in this zone is protected."
+    cooldown-ms: 1200
+  recovering:
+    text: "&bRestoring this block in {remaining}."
+    cooldown-ms: 1000
+  provider-not-ready:
+    text: "&eCustom content is unavailable; recovery has been postponed."
+    cooldown-ms: 4000
+  recovery-pending:
+    text: "&eA recovery task already owns this position."
+    cooldown-ms: 1000

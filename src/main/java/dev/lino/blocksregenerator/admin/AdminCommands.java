@@ -179,10 +179,10 @@ final class AdminCommands {
         require(args, 3, "setting <get|set> <region> <setting> [true|false]");
         Region region = region(args[1]);
         if (args[0].equalsIgnoreCase("get")) {
-            sender.sendMessage(args[2] + " = " + (args[2].equalsIgnoreCase("region-display-icon") ? region.icon() : region.setting(RegionSetting.parse(args[2]))));
+            sender.sendMessage(args[2] + " = " + (args[2].equalsIgnoreCase("menu.icon") ? region.icon() : region.setting(RegionSetting.parse(args[2]))));
         } else if (args[0].equalsIgnoreCase("set")) {
             require(args, 4, "setting set <region> <setting> <value>");
-            if (args[2].equalsIgnoreCase("region-display-icon")) {
+            if (args[2].equalsIgnoreCase("menu.icon")) {
                 Material material = MaterialResolver.match(args[3]);
                 if (material == null || !material.isItem()) {
                     throw new IllegalArgumentException("Choose an item material for the icon.");

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.logging.Logger;
+import dev.lino.blocksregenerator.configuration.SettingsRepository;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,9 +30,15 @@ class ClaimsServiceTest {
         player = mock(Player.class);
         when(plugin.getServer()).thenReturn(server);
         when(server.getPluginManager()).thenReturn(manager);
-        when(plugin.getConfig()).thenReturn(config);
+        config.set("format", 1);
         when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        service = new ClaimsService(plugin);
+        service = new ClaimsService(plugin, () -> {
+            try {
+                return SettingsRepository.parse(config.saveToString());
+            } catch (java.io.IOException error) {
+                throw new IllegalArgumentException(error);
+            }
+        });
     }
 
     @Test
@@ -53,8 +60,8 @@ class ClaimsServiceTest {
     void configuredOperatorBypassAndPermissionBypassApply() {
         when(player.isOp()).thenReturn(true);
         assertTrue(service.allowed(player, mock(Location.class), ClaimsService.Action.PLACE));
-        config.set("hooks.anti-grief.ignore-op", false);
-        config.set("hooks.anti-grief.bypass-permission", "blocksregenerator.bypass.claims");
+        config.set("protection.operators-exempt", false);
+        config.set("protection.exemption-node", "blocksregenerator.bypass.claims");
         when(player.hasPermission("blocksregenerator.bypass.claims")).thenReturn(true);
         assertTrue(service.allowed(player, mock(Location.class), ClaimsService.Action.PLACE));
     }

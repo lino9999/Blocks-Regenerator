@@ -1,0 +1,21 @@
+format: 1
+worlds:
+  automatic-coverage: false
+recovery:
+  remember-on-restart: true
+  checkpoint-interval-seconds: 30
+scheduler:
+  work-budget: 500
+protection:
+  consult-providers: true
+  operators-exempt: true
+  exemption-node: blocksregenerator.bypass.claims
+timing:
+  formula: "uniform(lower, upper)"
+visuals:
+  outline-distance-blocks: 40
+  outline-refresh-ticks: 10
+harvesting:
+  notify-stacked-breaks: true
+imports:
+  on-start: []

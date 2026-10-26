@@ -43,7 +43,7 @@ Useful for survival resource areas, Skyblock mining zones, prison-style mining a
 [CODE]/blocksregenerator create mine
 /blocksregenerator block add mine DIAMOND_ORE STONE 5 10
 /blocksregenerator block add mine IRON_ORE STONE 3
-/blocksregenerator setting set mine auto-inventory true
+/blocksregenerator setting set mine harvest.collect-items true
 /blocksregenerator edit mine[/CODE]
 
 Place ore inside the selected area before testing. Diamond ore returns after a random 5–10 seconds; iron ore returns after exactly 3 seconds. Automatic inventory collection sends drops to the player and drops any overflow into the world.
@@ -56,7 +56,7 @@ Place ore inside the selected area before testing. Diamond ore returns after a r
 Select a separate farm area with the wand, then:
 [CODE]/blocksregenerator create farm
 /blocksregenerator block add farm crop:WHEAT_SEEDS@7 AIR 10
-/blocksregenerator setting set farm allow-block-trampling false[/CODE]
+/blocksregenerator setting set farm soil.can-flatten false[/CODE]
 Only wheat at age 7 matches this rule. After harvesting, its captured mature state returns after ten seconds. Omit the age suffix to match any age.
 [/SPOILER]
 
@@ -147,7 +147,7 @@ Players need no additional BlocksRegenerator permission to mine configured block
 [TR][TD][ICODE]/bregen import legacy[/ICODE][/TD][TD]Import [ICODE]regions.json[/ICODE] and optional [ICODE]persistence.json[/ICODE] copied into [ICODE]plugins/BlocksRegenerator/imports/legacy/[/ICODE][/TD][/TR]
 [TR][TD][ICODE]/bregen import ultimate-regen[/ICODE][/TD][TD]Import Ultimate_BlockRegeneration definitions[/TD][/TR]
 [TR][TD][ICODE]/bregen import minexfarm-regen[/ICODE][/TD][TD]Import MineXFarmRegen definitions[/TD][/TR]
-[TR][TD][ICODE]/bregen reload[/ICODE][/TD][TD]Reload configuration/messages; alias [ICODE]rl[/ICODE][/TD][/TR]
+[TR][TD][ICODE]/bregen reload[/ICODE][/TD][TD]Reload typed settings and the notice catalog; alias [ICODE]rl[/ICODE][/TD][/TR]
 [TR][TD][ICODE]/bregen eval <expression>[/ICODE][/TD][TD]Evaluate a supported numeric expression[/TD][/TR]
 [TR][TD][ICODE]/bregen help[/ICODE][/TD][TD]Show command reference[/TD][/TR]
 [/TABLE]
@@ -173,10 +173,14 @@ One JAR covers this version range. Vanilla regeneration requires no additional p
 [*]Successful administrative edits are saved before confirmation.
 [*]Pending blocks restore before region configuration changes.
 [*]Invalid saved state is preserved for recovery rather than silently overwritten.
-[*]Configuration and messages are editable in [ICODE]plugins/BlocksRegenerator/[/ICODE].
+[*]Versioned [ICODE]settings.yml[/ICODE] and [ICODE]locale/en.yml[/ICODE] separate runtime options from structured player notices.
 [/LIST]
 
+[B]Upgrading from 1.x:[/B] stop the server and use the source repository's settings upgrade script before installing 2.0.0. Existing region storage retains schema 1. The Documentation tab explains the new grouped setting names, YAML files and formula syntax.
+
 [B]Good to know:[/B] remaining time pauses across clean server shutdowns. Crash recovery uses periodic checkpoints. A manual regeneration command restores pending blocks; it does not refill an entire mine.
+
+The project retains its reconstruction record and third-party notices. A technical redesign does not by itself certify publication rights or hosting-site approval.
 
 [CENTER][SIZE=4][B][COLOR=#2AA9B8]CREATE A REGION. SET A TIMER. KEEP RESOURCES RETURNING.[/COLOR][/B][/SIZE]
 [URL=https://github.com/lino9999/Blocks-Regenerator/releases/latest]Get BlocksRegenerator[/URL]  •  [URL=https://github.com/lino9999/Blocks-Regenerator#readme]Read the guide[/URL]  •  [URL=https://github.com/lino9999/Blocks-Regenerator/issues]Get support[/URL][/CENTER]

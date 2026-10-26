@@ -1,6 +1,7 @@
 package dev.lino.blocksregenerator.admin;
 
 import dev.lino.blocksregenerator.integration.IntegrationRegistry;
+import dev.lino.blocksregenerator.configuration.RuntimeSettings;
 import dev.lino.blocksregenerator.model.BlockKey;
 import dev.lino.blocksregenerator.model.Region;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,4 +21,5 @@ public interface AdminBackend {
     void importData(String source);
     int activeCount(String regionId);
     double evaluate(String expression);
+    RuntimeSettings settings();
 }
